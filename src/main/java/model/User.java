@@ -1,7 +1,6 @@
 package model;
 
-public class User {
-    private final String id;
+public class User extends Entity{
     private final String username;
     private final Double age;
 

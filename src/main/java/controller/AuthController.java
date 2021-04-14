@@ -1,5 +1,7 @@
 package controller;
 
+import http.requests.AuthorizationReq;
+import http.requests.RegistrationReq;
 import model.User;
 
 import java.util.Optional;
@@ -13,11 +15,16 @@ public class AuthController {
         return Optional.of(user);
     }
 
-    public void authorize(String id, String username) {
+    public void authorize(String username, String password) {
+        AuthorizationReq request = new AuthorizationReq();
+        Optional<User> response = request.getResponse(username, password);
+        user = response.orElseThrow();
     }
 
-    public void register(String id, String username, Double age) {
-
+    public void register(String username, String password, Double age) {
+        RegistrationReq request = new RegistrationReq();
+        Optional<User> response = request.getResponse(username, password, age);
+        user = response.orElseThrow();
     }
 
 }
