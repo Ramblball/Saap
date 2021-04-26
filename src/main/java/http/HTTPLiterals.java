@@ -1,0 +1,7 @@
+package http;
+
+public final class HTTPLiterals {
+    public static final String URI_LINK = "https://superappserver.herokuapp.com";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String APPLICATION_JSON = "application/json";
+}

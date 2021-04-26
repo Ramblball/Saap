@@ -1,24 +1,18 @@
 package model;
 
-public class User extends Entity{
-    private final String username;
-    private final Double age;
+import com.google.gson.annotations.SerializedName;
+import lombok.NonNull;
+import lombok.Value;
 
-    public User(String id, String username, Double age) {
-        this.id = id;
-        this.username = username;
-        this.age = age;
-    }
+@Value
+public class User implements Entity{
+    @SerializedName(ModelLiterals.ID)
+    @NonNull
+    String id;
 
-    public String getId() {
-        return id;
-    }
+    @NonNull
+    String name;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public Double getAge() {
-        return age;
-    }
+    @NonNull
+    Double age;
 }
