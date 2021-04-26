@@ -8,13 +8,16 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
+/**
+ * Класс для запроса на регистрацию
+ */
 public class RegistrationRequest extends RequestImpl implements Request {
     private static final String PATH = "/registration";
 
     @Override
     public Optional<String> send(JsonObject object) {
         try {
-            HttpResponse<String> response = super.send(object.toString(), PATH);
+            HttpResponse<String> response = makeRequest(object.toString(), PATH);
             if (response.statusCode() == 200) {
                 return Optional.of(response.body());
             }

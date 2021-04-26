@@ -6,10 +6,16 @@ import view.ViewLiterals;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Класс окна входа
+ */
 public class LoginFrame extends AuthFrame {
     private final JButton loginButton = new JButton(ViewLiterals.LOGIN_BUTTON);
     private final JButton registryButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
 
+    /**
+     * Конструктор, задающий параметры окна
+     */
     public LoginFrame() {
         super();
         setTitle("login");
@@ -24,6 +30,10 @@ public class LoginFrame extends AuthFrame {
         registryButton.addActionListener(this);
     }
 
+    /**
+     * Метод обрабатывающий взаимодействие с элементами окна
+     * @param e     Объект взаимодействия
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {

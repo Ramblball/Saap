@@ -7,7 +7,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
 
+/**
+ * Класс окна регистрации
+ */
 public class RegistrationFrame extends AuthFrame {
+    // Диапазон допустимых возрастов
     private static final Integer[] ages = new Integer[88];
     static {
         for (int i = 12; i < 100; i++) {
@@ -15,12 +19,18 @@ public class RegistrationFrame extends AuthFrame {
         }
     }
 
+    // Лэйбл для поля ввода возраста
     private final JLabel userLabel = new JLabel(ViewLiterals.AGE_LABEL);
+    // Выпадающий список для ввода возраста
     private final JComboBox<Integer> ageBox = new JComboBox<>(ages);
+    // Кнопка рагистрации
     private final JButton signupButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
 
-    private Double age;
+    private Double age = 12.0;
 
+    /**
+     * Конструктор, задающий параметры окна
+     */
     public RegistrationFrame() {
         super();
         setTitle("reg");
@@ -37,6 +47,10 @@ public class RegistrationFrame extends AuthFrame {
         signupButton.addActionListener(this);
     }
 
+    /**
+     * Метод обрабатывающий взаимодействие с элементами окна
+     * @param e     Объект взаимодействия
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == showPassword) {

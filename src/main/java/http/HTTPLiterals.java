@@ -1,5 +1,8 @@
 package http;
 
+/**
+ * Класс со строковыми литералами для HTTP запросов
+ */
 public final class HTTPLiterals {
     public static final String URI_LINK = "https://superappserver.herokuapp.com";
     public static final String CONTENT_TYPE = "Content-Type";
