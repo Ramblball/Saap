@@ -4,7 +4,6 @@ import controller.exceptions.AuthException;
 import view.ViewLiterals;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 /**
@@ -28,40 +27,39 @@ public class RegistrationFrame extends AuthFrame {
 
     private Double age = 12.0;
 
-    /**
-     * Конструктор, задающий параметры окна
-     */
     public RegistrationFrame() {
         super();
-        setTitle("reg");
+        build();
+    }
 
+    @Override
+    public void build() {
+        setLayoutManager();
+        setLocationAndSize();
+        addComponentsToContainer();
+        addListeners();
+    }
+
+    @Override
+    public void setLocationAndSize() {
         userLabel.setBounds(50, 185, 100, 30);
         ageBox.setBounds(150, 185, 50, 30);
         signupButton.setBounds(150, 300, 100, 30);
-
-        container.add(userLabel);
-        container.add(ageBox);
-        container.add(signupButton);
-
-        ageBox.addActionListener(this);
-        signupButton.addActionListener(this);
     }
 
-    /**
-     * Метод обрабатывающий взаимодействие с элементами окна
-     * @param e     Объект взаимодействия
-     */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == showPassword) {
-            if (showPassword.isSelected()) {
-                passwordField.setEchoChar((char) 0);
-            } else {
-                passwordField.setEchoChar('*');
-            }
-        } else if (e.getSource() == ageBox) {
+    public void addComponentsToContainer() {
+        add(userLabel);
+        add(ageBox);
+        add(signupButton);
+    }
+
+    @Override
+    public void addListeners() {
+        ageBox.addActionListener(e -> {
             age = ((Integer) Objects.requireNonNull(ageBox.getSelectedItem())).doubleValue();
-        } else if (e.getSource() == signupButton) {
+        });
+        signupButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
             if (userText.equals("") || passwordText.equals("") || age == null) {
@@ -79,6 +77,6 @@ public class RegistrationFrame extends AuthFrame {
                     JOptionPane.showMessageDialog(this, "Invalid params");
                 }
             }
-        }
+        });
     }
 }

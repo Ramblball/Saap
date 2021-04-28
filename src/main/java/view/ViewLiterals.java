@@ -17,4 +17,7 @@ public final class ViewLiterals {
     // Литералы для окна входа
     public static final String LOGIN_BUTTON = "Логин";
 
+    // Литералы для Чата
+    public static final String ENTER_MESSAGE_FIELD = "Введите сообщение...";
+    public static final String SEND_BUTTON = "Отправить";
 }
