@@ -1,42 +1,46 @@
 package view.auth;
 
 import controller.exceptions.AuthException;
+import view.Frame;
 import view.ViewLiterals;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 /**
  * Класс окна входа
  */
-public class LoginFrame extends AuthFrame {
+public class LoginFrame extends AuthFrame implements Frame {
     private final JButton loginButton = new JButton(ViewLiterals.LOGIN_BUTTON);
     private final JButton registryButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
 
-    /**
-     * Конструктор, задающий параметры окна
-     */
     public LoginFrame() {
         super();
-        setTitle("login");
-
-        loginButton.setBounds(50, 300, 100, 30);
-        registryButton.setBounds(200, 300, 100, 30);
-
-        container.add(loginButton);
-        container.add(registryButton);
-
-        loginButton.addActionListener(this);
-        registryButton.addActionListener(this);
+        build();
     }
 
-    /**
-     * Метод обрабатывающий взаимодействие с элементами окна
-     * @param e     Объект взаимодействия
-     */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == loginButton) {
+    public void build() {
+        setLayoutManager();
+        setLocationAndSize();
+        addComponentsToContainer();
+        addListeners();
+    }
+
+    @Override
+    public void setLocationAndSize() {
+        loginButton.setBounds(50, 300, 100, 30);
+        registryButton.setBounds(200, 300, 100, 30);
+    }
+
+    @Override
+    public void addComponentsToContainer() {
+        add(loginButton);
+        add(registryButton);
+    }
+
+    @Override
+    public void addListeners() {
+        loginButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
             if (userText.equals("") || passwordText.equals("")) {
@@ -53,17 +57,10 @@ public class LoginFrame extends AuthFrame {
                     JOptionPane.showMessageDialog(this, "Invalid Username or Password");
                 }
             }
-        }
-        if (e.getSource() == showPassword) {
-            if (showPassword.isSelected()) {
-                passwordField.setEchoChar((char) 0);
-            } else {
-                passwordField.setEchoChar('*');
-            }
-        }
-        if (e.getSource() == registryButton) {
+        });
+        registryButton.addActionListener(e -> {
             setVisible(false);
             new RegistrationFrame();
-        }
+        });
     }
 }

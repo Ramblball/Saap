@@ -1,23 +1,23 @@
 package view.auth;
 
 import controller.AuthController;
+import view.Frame;
 import view.ViewLiterals;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 /**
  * Класс окна авторизации
  */
-abstract class AuthFrame extends JFrame implements ActionListener {
+abstract class AuthFrame extends JFrame implements Frame {
     protected static final AuthController auth = new AuthController();
 
-    protected Container container = getContentPane();
+    private final Container container = getContentPane();
     // Лэйбл для поля ввода имени пользователя
-    protected JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
+    private final JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
     // Лэйбл для поля ввода пароля
-    protected JLabel passwordLabel = new JLabel(ViewLiterals.PASSWORD_LABEL);
+    private final JLabel passwordLabel = new JLabel(ViewLiterals.PASSWORD_LABEL);
     // Поле для ввода имени пользователя
     protected JTextField userTextField = new JTextField();
     // Поле для ввода пароля
@@ -29,39 +29,39 @@ abstract class AuthFrame extends JFrame implements ActionListener {
      * Конструктор, задающий параметры окна
      */
     AuthFrame() {
+        build();
+    }
+
+    @Override
+    public void build() {
         setLayoutManager();
         setLocationAndSize();
         addComponentsToContainer();
-        addActionEvent();
+        addListeners();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(370, 600));
         setResizable(false);
-        pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    protected void setLayoutManager() {
+    @Override
+    public void setLayoutManager() {
         container.setLayout(null);
     }
 
-    /**
-     * Метод для установки параметров размещения элементов в окне
-     */
-    protected void setLocationAndSize() {
+    @Override
+    public void setLocationAndSize() {
         userLabel.setBounds(50, 150, 100, 30);
         passwordLabel.setBounds(50, 220, 100, 30);
         userTextField.setBounds(150, 150, 150, 30);
         passwordField.setBounds(150, 220, 150, 30);
         showPassword.setBounds(150, 250, 150, 30);
-
     }
 
-    /**
-     * Метод для добавления элементов к окну
-     */
-    protected void addComponentsToContainer() {
+    @Override
+    public void addComponentsToContainer() {
         container.add(userLabel);
         container.add(passwordLabel);
         container.add(userTextField);
@@ -69,10 +69,14 @@ abstract class AuthFrame extends JFrame implements ActionListener {
         container.add(showPassword);
     }
 
-    /**
-     * Метод для добавления обработчиков к элементам окна
-     */
-    protected void addActionEvent() {
-        showPassword.addActionListener(this);
+    @Override
+    public void addListeners() {
+        showPassword.addActionListener(e -> {
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0);
+            } else {
+                passwordField.setEchoChar('*');
+            }
+        });
     }
 }
