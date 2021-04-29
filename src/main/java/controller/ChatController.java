@@ -1,14 +1,19 @@
 package controller;
 
 import chat.SocketChat;
+import lombok.extern.slf4j.Slf4j;
+import model.User;
 
 import javax.swing.*;
+import java.util.Queue;
 import java.util.concurrent.SynchronousQueue;
 
 /**
  * Класс описывающий чат с отдельным пользователем
  */
+@Slf4j
 public class ChatController {
+    private final static AuthController auth = new AuthController();
     // Идентификатор собеседника
     private final String mate;
     // Экземпляр сокет соединения
@@ -23,18 +28,21 @@ public class ChatController {
 
     /**
      * Метод для считывания сообщения и записи в соответствующее поле
-     * @param chatField         Поле для записи
+     *
+     * @param chatField Поле для записи
      */
     public void waitMessages(JTextArea chatField) {
         messageWaiter = new Thread(() -> {
             while (true) {
-                synchronized (chat.getMessages()) {
-                    SynchronousQueue<String> queue = chat.getMessages().get(mate);
-                    while (!queue.isEmpty()) {
-                        chatField.append(queue.poll());
-                        chatField.append("\n");
-                    }
+                Queue<String> queue = chat.getMessages().get(mate);
+                if (queue == null) {
+                    continue;
                 }
+                while (!queue.isEmpty()) {
+                    chatField.append(mate + ": " + queue.poll());
+                    chatField.append("\n");
+                }
+                log.debug(chatField.getText());
             }
         });
         messageWaiter.start();
@@ -42,11 +50,12 @@ public class ChatController {
 
     /**
      * Метод для отправки сообщения
-     * @param message       Сообщение
+     *
+     * @param message Сообщение
      */
     public void sendMessage(String message) {
-        //TODO: Добавление идентификатора отпрвителя
-        chat.send(mate + "#:#" + message);
+
+        chat.send("msg#:#" + mate + "#:#" + message);
     }
 
     /**

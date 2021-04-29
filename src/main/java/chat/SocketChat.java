@@ -1,6 +1,8 @@
 package chat;
 
+import controller.AuthController;
 import lombok.extern.slf4j.Slf4j;
+import model.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,9 +16,10 @@ import java.util.concurrent.SynchronousQueue;
  */
 @Slf4j
 public class SocketChat {
+    private final static AuthController auth = new AuthController();
     // Адресс сервера
-    private static final String HOST = "https://superappserver.herokuapp.com";
-    private static final int PORT = 8081;
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 8080;
 
     private static final String CLOSE_COMMAND = "SystemSessionEnd";
     private static final String SEPARATOR = "#:#";
@@ -31,7 +34,7 @@ public class SocketChat {
     private PrintWriter out;
 
     // Все полученные сообщения, распределенные по отправителям
-    private final Map<String, SynchronousQueue<String>> messages =
+    private final Map<String, Queue<String>> messages =
             Collections.synchronizedMap(new HashMap<>());
 
     private SocketChat() {
@@ -39,6 +42,8 @@ public class SocketChat {
             clientSocket = new Socket(HOST, PORT);
             in = new Scanner(clientSocket.getInputStream());
             out = new PrintWriter(clientSocket.getOutputStream(), true);
+            User user = auth.getUser().get();
+            send("init#:#" + user.getName() + "#:#" + user.getId());
             instance = this;
             waitMessages();
         } catch (IOException e) {
@@ -73,18 +78,14 @@ public class SocketChat {
     private void waitMessages() {
         waiterThread = new Thread(() -> {
             while (true) {
-                synchronized (messages) {
-                    if (in.hasNext()) {
+                if (in.hasNext()) {
+                    synchronized (messages) {
                         String[] inMessage = in.nextLine().split(SEPARATOR);
-                        String user = inMessage[0];
-                        if (!messages.containsKey(user)) {
-                            messages.put(user, new SynchronousQueue<>());
+                        String sender = inMessage[0];
+                        if (!messages.containsKey(sender)) {
+                            messages.put(sender, new PriorityQueue<>());
                         }
-                        try {
-                            messages.get(user).put(inMessage[1]);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        messages.get(sender).add(inMessage[1]);
                     }
                 }
             }
@@ -92,7 +93,7 @@ public class SocketChat {
         waiterThread.start();
     }
 
-    public Map<String, SynchronousQueue<String>> getMessages() {
+    public Map<String, Queue<String>> getMessages() {
         return messages;
     }
 }

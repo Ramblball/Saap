@@ -2,7 +2,6 @@ package view.auth;
 
 import controller.exceptions.AuthException;
 import view.ViewLiterals;
-import view.main.MainFrame;
 
 import javax.swing.*;
 
@@ -19,6 +18,7 @@ public class LoginFrame extends AuthFrame {
 
     @Override
     public void build() {
+        // TODO: ?
         super.setComponentsStyle();
         super.addComponentsToContainer();
         super.addListeners();

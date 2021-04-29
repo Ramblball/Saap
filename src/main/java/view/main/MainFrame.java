@@ -1,20 +1,22 @@
 package view.main;
 
-import controller.AuthController;
 import lombok.extern.slf4j.Slf4j;
 import view.Frame;
 import view.chat.ChatFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 
 @Slf4j
 public class MainFrame extends JFrame implements Frame {
-    private static final AuthController authController = new AuthController();
+    private final Box serviceBox = Box.createVerticalBox();
+    private final Box chatBox = Box.createVerticalBox();
 
-    private final Box box = Box.createVerticalBox();
-
+    private final JButton addChatButton = new JButton();
     private final JButton datingButton = new JButton();
+
+    private final HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
     public MainFrame() {
         super("SApp");
@@ -27,6 +29,8 @@ public class MainFrame extends JFrame implements Frame {
         setButtonStyle(datingButton,
                 getClass().getClassLoader().getResource("images/defB.png").getFile(),
                 getClass().getClassLoader().getResource("images/toB.png").getFile());
+        addChatButton.setText("PLUS");
+        addChatButton.setSize(new Dimension(50, 50));
     }
 
     private void setButtonStyle(JButton button, String imagePath, String pressedImagePath) {
@@ -43,15 +47,23 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void addComponentsToContainer() {
-        add(box);
-        box.add(datingButton);
-        add(new ChatFrame(""), BorderLayout.EAST);
+        add(serviceBox);
+//        add(chatBox);
+//        chatBox.add(addChatButton);
+        serviceBox.add(datingButton);
+        add(new ChatFrame("6089f9e14147ed4ca3ce267f"), BorderLayout.EAST);
     }
 
     @Override
     public void addListeners() {
         datingButton.addActionListener(e -> {
             log.info("user open dating");
+        });
+        addChatButton.addActionListener(e -> {
+            //TODO: ToFront
+            ChatFrame newChat = new ChatFrame("608a0f0ab1b22905e236d990");
+            chatFrames.put("608a0f0ab1b22905e236d990", newChat);
+            add(newChat, BorderLayout.EAST);
         });
     }
 
