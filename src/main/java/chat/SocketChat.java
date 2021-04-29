@@ -1,5 +1,7 @@
 package chat;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,9 +12,10 @@ import java.util.concurrent.SynchronousQueue;
  * Класс открытия сокет соединения
  * Реализует Singleton
  */
+@Slf4j
 public class SocketChat {
     // Адресс сервера
-    private static final String HOST = "http://localhost";
+    private static final String HOST = "https://superappserver.herokuapp.com";
     private static final int PORT = 8081;
 
     private static final String CLOSE_COMMAND = "SystemSessionEnd";
@@ -39,7 +42,7 @@ public class SocketChat {
             instance = this;
             waitMessages();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

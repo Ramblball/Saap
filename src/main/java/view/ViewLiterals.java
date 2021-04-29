@@ -5,7 +5,7 @@ package view;
  */
 public final class ViewLiterals {
     // Общие литералы для окон авторизации
-    public static final String USER_LABEL = "Имя пользователя";
+    public static final String USER_LABEL = "Имя";
     public static final String PASSWORD_LABEL = "Пароль";
     public static final String SHOW_PASSWORD = "Показать пароль";
 

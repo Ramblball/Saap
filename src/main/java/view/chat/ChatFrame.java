@@ -1,6 +1,7 @@
 package view.chat;
 
 import controller.ChatController;
+import lombok.extern.slf4j.Slf4j;
 import view.Frame;
 import view.ViewLiterals;
 
@@ -12,6 +13,7 @@ import java.awt.event.FocusEvent;
 /**
  * Класс вложенного окна чата
  */
+@Slf4j
 public class ChatFrame extends JInternalFrame implements Frame {
 
     private final ChatController chatController;
@@ -33,22 +35,18 @@ public class ChatFrame extends JInternalFrame implements Frame {
 
     @Override
     public void build() {
-        setLayoutManager();
-        setLocationAndSize();
+        setComponentsStyle();
         addComponentsToContainer();
         addListeners();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(600, 500));
+        setPreferredSize(new Dimension(500, 500));
         setResizable(false);
         setVisible(true);
     }
 
     @Override
-    public void setLayoutManager() {}
-
-    @Override
-    public void setLocationAndSize() {
+    public void setComponentsStyle() {
         messageTextArea.setEditable(false);
         messageTextArea.setLineWrap(true);
     }
@@ -64,7 +62,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
     @Override
     public void addListeners() {
         sendButton.addActionListener(e -> {
-            if (!messageTextArea.getText().trim().isEmpty()) {
+            if (!enterMessageAskField.getText().trim().isEmpty()) {
                 sendMessage();
             }
         });
@@ -77,8 +75,8 @@ public class ChatFrame extends JInternalFrame implements Frame {
     }
 
     private void sendMessage() {
-        String message = messageTextArea.getText();
+        String message = enterMessageAskField.getText().trim();
         chatController.sendMessage(message);
-        messageTextArea.setText("");
+        enterMessageAskField.setText("");
     }
 }

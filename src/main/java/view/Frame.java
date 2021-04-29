@@ -2,12 +2,10 @@ package view;
 
 public interface Frame {
 
-    void setLayoutManager();
-
     /**
      * Метод для установки параметров размещения элементов в окне
      */
-    void setLocationAndSize();
+    void setComponentsStyle();
 
     /**
      * Метод для добавления элементов к окну

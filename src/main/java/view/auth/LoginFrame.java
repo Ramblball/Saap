@@ -1,41 +1,43 @@
 package view.auth;
 
 import controller.exceptions.AuthException;
-import view.Frame;
 import view.ViewLiterals;
+import view.main.MainFrame;
 
 import javax.swing.*;
 
 /**
  * Класс окна входа
  */
-public class LoginFrame extends AuthFrame implements Frame {
+public class LoginFrame extends AuthFrame {
     private final JButton loginButton = new JButton(ViewLiterals.LOGIN_BUTTON);
     private final JButton registryButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
 
     public LoginFrame() {
-        super();
         build();
     }
 
     @Override
     public void build() {
-        setLayoutManager();
-        setLocationAndSize();
+        super.setComponentsStyle();
+        super.addComponentsToContainer();
+        super.addListeners();
+        setComponentsStyle();
         addComponentsToContainer();
         addListeners();
+        super.build();
     }
 
     @Override
-    public void setLocationAndSize() {
-        loginButton.setBounds(50, 300, 100, 30);
-        registryButton.setBounds(200, 300, 100, 30);
+    public void setComponentsStyle() {
+        loginButton.setBounds(150, 300, 150, 30);
+        registryButton.setBounds(150, 350, 150, 30);
     }
 
     @Override
     public void addComponentsToContainer() {
-        add(loginButton);
-        add(registryButton);
+        container.add(loginButton);
+        container.add(registryButton);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class LoginFrame extends AuthFrame implements Frame {
                     JOptionPane.showMessageDialog(this, exception.getMessage());
                 }
                 if (auth.getUser().isPresent()) {
-                    JOptionPane.showMessageDialog(this, "Login Successful");
+                    invokeMain();
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid Username or Password");
                 }
@@ -60,7 +62,7 @@ public class LoginFrame extends AuthFrame implements Frame {
         });
         registryButton.addActionListener(e -> {
             setVisible(false);
-            new RegistrationFrame();
+            new RegistrationFrame().pack();
         });
     }
 }

@@ -19,7 +19,7 @@ public class RegistrationFrame extends AuthFrame {
     }
 
     // Лэйбл для поля ввода возраста
-    private final JLabel userLabel = new JLabel(ViewLiterals.AGE_LABEL);
+    private final JLabel ageLabel = new JLabel(ViewLiterals.AGE_LABEL);
     // Выпадающий список для ввода возраста
     private final JComboBox<Integer> ageBox = new JComboBox<>(ages);
     // Кнопка рагистрации
@@ -28,30 +28,32 @@ public class RegistrationFrame extends AuthFrame {
     private Double age = 12.0;
 
     public RegistrationFrame() {
-        super();
         build();
     }
 
     @Override
     public void build() {
-        setLayoutManager();
-        setLocationAndSize();
+        super.setComponentsStyle();
+        super.addComponentsToContainer();
+        super.addListeners();
+        setComponentsStyle();
         addComponentsToContainer();
         addListeners();
+        super.build();
     }
 
     @Override
-    public void setLocationAndSize() {
-        userLabel.setBounds(50, 185, 100, 30);
+    public void setComponentsStyle() {
+        ageLabel.setBounds(50, 185, 100, 30);
         ageBox.setBounds(150, 185, 50, 30);
-        signupButton.setBounds(150, 300, 100, 30);
+        signupButton.setBounds(150, 300, 150, 30);
     }
 
     @Override
     public void addComponentsToContainer() {
-        add(userLabel);
-        add(ageBox);
-        add(signupButton);
+        container.add(ageLabel);
+        container.add(ageBox);
+        container.add(signupButton);
     }
 
     @Override
@@ -70,9 +72,8 @@ public class RegistrationFrame extends AuthFrame {
                 } catch (AuthException exception) {
                     JOptionPane.showMessageDialog(this, exception.getMessage());
                 }
-                //TODO: Заменить на переход на главное окно
                 if (auth.getUser().isPresent()) {
-                    JOptionPane.showMessageDialog(this, "Registration Successful");
+                    invokeMain();
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid params");
                 }
