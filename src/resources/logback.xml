@@ -3,7 +3,7 @@
 
     <appender name="ConsoleOut" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%r ms  %d{(dd-MM-yyyy HH:mm:ss)} [%level] %logger-%thread --> %msg%n</pattern>
+            <pattern>%r | %d{dd-MM-yyyy HH:mm:ss} | %level | %logger-%thread --> %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -17,11 +17,15 @@
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%r ms  %d{(dd-MM-yyyy HH:mm:ss)} [%level] %logger-%thread --> %msg%n</pattern>
+            <pattern>%r | %d{dd-MM-yyyy HH:mm:ss} | %level | %logger-%thread --> %msg%n</pattern>
         </encoder>
     </appender>
 # для вывода debug ввести DEBUG за место INFO
     <root level="INFO">
+        <appender-ref ref="ConsoleOut"/>
+        <appender-ref ref="FileOut"/>
+    </root>
+    <root level="DEBUG">
         <appender-ref ref="ConsoleOut"/>
         <appender-ref ref="FileOut"/>
     </root>

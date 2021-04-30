@@ -1,21 +1,16 @@
-import view.MainApplicationFrame;
+import lombok.extern.slf4j.Slf4j;
+import view.auth.AuthFrame;
+import view.auth.LoginFrame;
 
 import javax.swing.*;
-import java.awt.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
-
     public static void main(String[] args) {
         log.info("Sapp started");
         SwingUtilities.invokeLater(() -> {
-            MainApplicationFrame frame = new MainApplicationFrame();
+            AuthFrame frame = new LoginFrame();
             frame.pack();
-            frame.setVisible(true);
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         });
     }
 }

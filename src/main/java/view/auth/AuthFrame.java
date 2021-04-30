@@ -3,6 +3,7 @@ package view.auth;
 import controller.AuthController;
 import view.Frame;
 import view.ViewLiterals;
+import view.main.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +11,10 @@ import java.awt.*;
 /**
  * Класс окна авторизации
  */
-abstract class AuthFrame extends JFrame implements Frame {
+public abstract class AuthFrame extends JFrame implements Frame {
     protected static final AuthController auth = new AuthController();
 
-    private final Container container = getContentPane();
+    protected Container container = getContentPane();
     // Лэйбл для поля ввода имени пользователя
     private final JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
     // Лэйбл для поля ввода пароля
@@ -25,20 +26,14 @@ abstract class AuthFrame extends JFrame implements Frame {
     // Чекбокс для отображения и скрытия пароля
     protected JCheckBox showPassword = new JCheckBox(ViewLiterals.SHOW_PASSWORD);
 
-    /**
-     * Конструктор, задающий параметры окна
-     */
     AuthFrame() {
-        build();
+        if (auth.getUser().isPresent()) {
+            invokeMain();
+        }
     }
 
     @Override
     public void build() {
-        setLayoutManager();
-        setLocationAndSize();
-        addComponentsToContainer();
-        addListeners();
-
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(370, 600));
         setResizable(false);
@@ -47,12 +42,8 @@ abstract class AuthFrame extends JFrame implements Frame {
     }
 
     @Override
-    public void setLayoutManager() {
+    public void setComponentsStyle() {
         container.setLayout(null);
-    }
-
-    @Override
-    public void setLocationAndSize() {
         userLabel.setBounds(50, 150, 100, 30);
         passwordLabel.setBounds(50, 220, 100, 30);
         userTextField.setBounds(150, 150, 150, 30);
@@ -78,5 +69,13 @@ abstract class AuthFrame extends JFrame implements Frame {
                 passwordField.setEchoChar('*');
             }
         });
+    }
+
+    protected void invokeMain() {
+        SwingUtilities.invokeLater(() -> {
+            MainFrame main = new MainFrame();
+            main.pack();
+        });
+        dispose();
     }
 }

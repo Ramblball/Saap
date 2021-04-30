@@ -15,7 +15,7 @@ import java.util.Optional;
  * Класс контроллер для аутентификации
  */
 public class AuthController {
-    private User user;
+    private static User user;
 
     /**
      * Метод возвращающий объект пользователя
@@ -40,7 +40,7 @@ public class AuthController {
         object.addProperty(ModelLiterals.USERNAME, username);
         object.addProperty(ModelLiterals.PASSWORD, password);
         Optional<String> response = request.send(object);
-        response.ifPresent(s -> this.user = gson.fromJson(s, User.class));
+        response.ifPresent(s -> user = gson.fromJson(s, User.class));
         response.orElseThrow(() -> new AuthException(ControllerLiterals.AUTHORIZE_EXCEPTION));
     }
 

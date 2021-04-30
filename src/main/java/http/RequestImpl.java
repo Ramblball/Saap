@@ -11,6 +11,7 @@ import java.time.Duration;
  */
 public abstract class RequestImpl {
     private final Client client = new Client();
+    public static final String URI_LINK = "https://superappserver.herokuapp.com";
 
     /**
      * Метод составляющий запрос к серверу
@@ -21,7 +22,7 @@ public abstract class RequestImpl {
      * @throws InterruptedException     Ошибка экстренного завершения потока
      */
     protected HttpResponse<String> makeRequest(String data, String path) throws IOException, InterruptedException {
-        URI link = URI.create(HTTPLiterals.URI_LINK + path);
+        URI link = URI.create(URI_LINK + path);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(link)
