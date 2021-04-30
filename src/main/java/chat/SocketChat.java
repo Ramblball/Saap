@@ -18,10 +18,11 @@ import java.util.concurrent.SynchronousQueue;
 public class SocketChat {
     private final static AuthController auth = new AuthController();
     // Адресс сервера
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 8080;
+    // TODO: Do something with it
+    private static final String HOST = "https://superappserver.herokuapp.com";
+    private static final int PORT = 8081;
 
-    private static final String CLOSE_COMMAND = "SystemSessionEnd";
+    private static final String CLOSE_COMMAND = "exit";
     private static final String SEPARATOR = "#:#";
 
     // Экземпляр соединения
@@ -39,6 +40,7 @@ public class SocketChat {
 
     private SocketChat() {
         try {
+            log.info("Trying to connect the socket server");
             clientSocket = new Socket(HOST, PORT);
             in = new Scanner(clientSocket.getInputStream());
             out = new PrintWriter(clientSocket.getOutputStream(), true);

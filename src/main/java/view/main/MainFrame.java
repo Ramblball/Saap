@@ -25,10 +25,14 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void setComponentsStyle() {
-        // TODO: ?
-        setButtonStyle(datingButton,
-                getClass().getClassLoader().getResource("images/defB.png").getFile(),
-                getClass().getClassLoader().getResource("images/toB.png").getFile());
+        try {
+            setButtonStyle(datingButton,
+                    getClass().getClassLoader().getResource("images/defB.png").getFile(),
+                    getClass().getClassLoader().getResource("images/toB.png").getFile());
+        } catch (NullPointerException ex) {
+            log.error(ex.getMessage(), ex);
+            System.exit(0);
+        }
         addChatButton.setText("PLUS");
         addChatButton.setSize(new Dimension(50, 50));
     }

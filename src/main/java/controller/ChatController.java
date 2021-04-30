@@ -2,11 +2,9 @@ package controller;
 
 import chat.SocketChat;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
 
 import javax.swing.*;
 import java.util.Queue;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * Класс описывающий чат с отдельным пользователем

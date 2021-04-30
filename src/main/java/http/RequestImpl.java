@@ -11,7 +11,7 @@ import java.time.Duration;
  */
 public abstract class RequestImpl {
     private final Client client = new Client();
-    public static final String URI_LINK = "http://localhost:3000";
+    public static final String URI_LINK = "https://superappserver.herokuapp.com";
 
     /**
      * Метод составляющий запрос к серверу
