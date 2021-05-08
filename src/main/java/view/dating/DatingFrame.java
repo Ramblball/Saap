@@ -1,14 +1,14 @@
 package view.dating;
 
 import view.Frame;
+import view.ViewLiterals;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class DatingFrame extends JFrame implements Frame {
-
-    private final Box informationBox = Box.createVerticalBox();
-    private final JButton backButton = new JButton("Назад");
+    private final JPanel informationPanel = new JPanel();
+    private final JButton backButton = new JButton(ViewLiterals.BACK_TO_MAIN_MENU);
     private final JButton likeButton = new JButton();
     private final JButton chatButton = new JButton();
     private final JButton skipButton = new JButton();
@@ -20,20 +20,22 @@ public class DatingFrame extends JFrame implements Frame {
 
     @Override
     public void setComponentsStyle() {
-        informationBox.setBounds(50, 38, 304, 345);
-        likeButton.setSize(71, 70);
-        chatButton.setBounds(164, 415, 72, 72);
-        skipButton.setBounds(275, 415, 72, 72);
-        backButton.setBounds(57, 518, 290, 50);
+        informationPanel.setBounds(50, 28, 304, 345);
+        informationPanel.setBackground(new Color(196, 196, 196));
+        likeButton.setBounds(59, 412, 71, 70);
+        chatButton.setBounds(162, 412, 72, 72);
+        skipButton.setBounds(273, 412, 72, 72);
+        backButton.setBounds(57, 515, 290, 50);
     }
 
     @Override
     public void addComponentsToContainer() {
-        add(informationBox);
-        add(likeButton);
-        add(chatButton);
-        add(skipButton);
-        add(backButton);
+        this.getContentPane().setLayout(null);
+        this.add(chatButton);
+        this.add(skipButton);
+        this.add(likeButton);
+        this.add(backButton);
+        this.add(informationPanel);
     }
 
     @Override
@@ -48,7 +50,6 @@ public class DatingFrame extends JFrame implements Frame {
         addListeners();
         this.setBounds(400, 400, 400, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(400, 600));
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
