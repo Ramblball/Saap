@@ -10,6 +10,7 @@ public final class ViewLiterals {
     public static final String SHOW_PASSWORD = "Показать пароль";
 
     // Литералы для окна регистрации
+    public static final String CITY_LABEL = "Город";
     public static final String AGE_LABEL = "Возраст";
     public static final String SIGN_UP_BUTTON = "Регистрация";
     public static final String EMPTY_FIELDS_DIALOG = "Заполните все поля";
