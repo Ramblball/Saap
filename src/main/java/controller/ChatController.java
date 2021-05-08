@@ -1,65 +1,71 @@
 package controller;
 
-import chat.SocketChat;
+import chat.StompClient;
+import chat.StompHandler;
+import com.google.gson.Gson;
+import controller.exceptions.NotFoundException;
+import http.Request;
+import http.payload.Friend;
+import http.request.addChatRequest;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import model.Message;
+import model.User;
 
 import javax.swing.*;
-import java.util.Queue;
+import java.util.Optional;
+import java.util.concurrent.SynchronousQueue;
 
-/**
- * Класс описывающий чат с отдельным пользователем
- */
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatController {
-    private final static AuthController auth = new AuthController();
+
+    private static final Gson gson = new Gson();
     // Идентификатор собеседника
-    private final String mate;
+    User mate;
     // Экземпляр сокет соединения
-    private final SocketChat chat;
+    StompClient client;
     // Поток считывающий сообщения собеседника
-    private Thread messageWaiter;
+    Thread messageWaiter;
 
-    public ChatController(String mate) {
-        this.mate = mate;
-        chat = SocketChat.getInstance();
-    }
-
-    /**
-     * Метод для считывания сообщения и записи в соответствующее поле
-     *
-     * @param chatField Поле для записи
-     */
-    public void waitMessages(JTextArea chatField) {
+    public ChatController(User user, JTextArea chatField) {
+        mate = user;
+        client = new StompClient();
         messageWaiter = new Thread(() -> {
+            SynchronousQueue<Message> queue = StompHandler.getQueue(mate.getId());
             while (true) {
-                Queue<String> queue = chat.getMessages().get(mate);
-                if (queue == null) {
-                    continue;
-                }
-                while (!queue.isEmpty()) {
-                    chatField.append(mate + ": " + queue.poll());
+                try {
+                    Message message = queue.take();
+                    chatField.append(message.getSenderName() + ": " + message.getMessage());
                     chatField.append("\n");
+                    log.info(message.toString());
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage(), e);
                 }
-                log.debug(chatField.getText());
             }
-        });
+        }, "MESSAGE_WAITER_" + mate.getName());
+        client.connect();
         messageWaiter.start();
     }
 
-    /**
-     * Метод для отправки сообщения
-     *
-     * @param message Сообщение
-     */
-    public void sendMessage(String message) {
-
-        chat.send("msg#:#" + mate + "#:#" + message);
+    public void send(String text) {
+        Message message = Message.builder()
+                .senderId(UserController.getUser().getId())
+                .receiverId(mate.getId())
+                .senderName(UserController.getUser().getName())
+                .receiverName(mate.getName())
+                .message(text)
+                .build();
+        client.send(message);
     }
 
-    /**
-     * Метод для остановки считывания сообщения
-     */
-    public void close() {
-        messageWaiter.interrupt();
+    public static User getFriendInfo(Friend friend) throws NotFoundException {
+        Request request = new addChatRequest();
+        Optional<String> response = request.send(friend);
+        if (response.isEmpty()) {
+            throw new NotFoundException("Пользователь с таким именем не найден");
+        }
+        return gson.fromJson(response.get(), User.class);
     }
 }

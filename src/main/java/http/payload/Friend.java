@@ -1,18 +1,12 @@
-package model;
+package http.payload;
 
+import http.PayLoad;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-/**
- * Класс модели данных пользователя
- */
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class User {
-
-    String id;
+public class Friend implements PayLoad {
     String name;
-    Integer age;
-    String city;
 }

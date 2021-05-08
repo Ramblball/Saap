@@ -1,7 +1,10 @@
 package view.chat;
 
 import controller.ChatController;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import model.User;
 import view.Frame;
 import view.ViewLiterals;
 
@@ -14,23 +17,21 @@ import java.awt.event.FocusEvent;
  * Класс вложенного окна чата
  */
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatFrame extends JInternalFrame implements Frame {
 
-    private final ChatController chatController;
+    ChatController chatController;
 
-    private final JTextArea messageTextArea = new JTextArea();
-    private final JTextField enterMessageAskField = new JTextField(ViewLiterals.ENTER_MESSAGE_FIELD);
+    JTextArea messageTextArea = new JTextArea();
+    JTextField enterMessageAskField = new JTextField(ViewLiterals.ENTER_MESSAGE_FIELD);
 
-    private final JScrollPane scrollPane = new JScrollPane(messageTextArea);
-    private final JPanel bottomPanel = new JPanel(new BorderLayout());
+    JScrollPane scrollPane = new JScrollPane(messageTextArea);
+    JPanel bottomPanel = new JPanel(new BorderLayout());
 
-    private final JButton sendButton = new JButton(ViewLiterals.SEND_BUTTON);
+    JButton sendButton = new JButton(ViewLiterals.SEND_BUTTON);
 
-    public ChatFrame(String mate) {
-        chatController = new ChatController(mate);
-        chatController.waitMessages(messageTextArea);
-
-        build();
+    public ChatFrame(User mate) {
+        chatController = new ChatController(mate, messageTextArea);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
 
     private void sendMessage() {
         String message = enterMessageAskField.getText().trim();
-        chatController.sendMessage(message);
+        chatController.send(message);
         enterMessageAskField.setText("");
     }
 }

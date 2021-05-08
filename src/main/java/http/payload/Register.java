@@ -1,18 +1,18 @@
-package model;
+package http.payload;
 
+import http.PayLoad;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-/**
- * Класс модели данных пользователя
- */
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class User {
+public class Register implements PayLoad {
 
-    String id;
     String name;
-    Integer age;
+    String password;
     String city;
+    Integer age;
 }

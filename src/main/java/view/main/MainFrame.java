@@ -1,6 +1,12 @@
 package view.main;
 
+import controller.ChatController;
+import controller.exceptions.NotFoundException;
+import http.payload.Friend;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import model.User;
 import view.Frame;
 import view.chat.ChatFrame;
 
@@ -9,18 +15,28 @@ import java.awt.*;
 import java.util.HashMap;
 
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame implements Frame {
-    private final Box serviceBox = Box.createVerticalBox();
-    private final Box chatBox = Box.createVerticalBox();
 
-    private final JButton addChatButton = new JButton();
-    private final JButton datingButton = new JButton();
+    Box serviceVBox = Box.createVerticalBox();
+    Box chatVBox = Box.createVerticalBox();
 
-    private final HashMap<String, ChatFrame> chatFrames = new HashMap<>();
+    JButton addChatButton = new JButton();
+    JButton datingButton = new JButton();
 
-    public MainFrame() {
-        super("SApp");
-        build();
+    HashMap<String, ChatFrame> chatFrames = new HashMap<>();
+
+    @Override
+    public void build() {
+        setComponentsStyle();
+        addComponentsToContainer();
+        addListeners();
+
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setPreferredSize(new Dimension(800, 500));
+        setResizable(false);
+        setVisible(true);
+        pack();
     }
 
     @Override
@@ -34,7 +50,7 @@ public class MainFrame extends JFrame implements Frame {
             System.exit(0);
         }
         addChatButton.setText("PLUS");
-        addChatButton.setSize(new Dimension(50, 50));
+        chatVBox.setSize(new Dimension(100, 400));
     }
 
     private void setButtonStyle(JButton button, String imagePath, String pressedImagePath) {
@@ -51,35 +67,30 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void addComponentsToContainer() {
-        add(serviceBox);
-//        add(chatBox);
-//        chatBox.add(addChatButton);
-        serviceBox.add(datingButton);
-        add(new ChatFrame("6089f9e14147ed4ca3ce267f"), BorderLayout.EAST);
+        add(serviceVBox, BorderLayout.WEST);
+        add(chatVBox);
+        chatVBox.add(addChatButton);
+        serviceVBox.add(datingButton);
     }
 
     @Override
     public void addListeners() {
-        datingButton.addActionListener(e -> {
-            log.info("user open dating");
-        });
+        datingButton.addActionListener(e -> log.info("user open dating"));
         addChatButton.addActionListener(e -> {
-            //TODO: ToFront
-            ChatFrame newChat = new ChatFrame("608a0f0ab1b22905e236d990");
-            chatFrames.put("608a0f0ab1b22905e236d990", newChat);
-            add(newChat, BorderLayout.EAST);
+            Object result = JOptionPane.showInputDialog(this,
+                    "Введите имя пользователя");
+            Friend friend = new Friend(result.toString().trim());
+            User user;
+            try {
+                user = ChatController.getFriendInfo(friend);
+            } catch (NotFoundException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+                return;
+            }
+            ChatFrame chat = new ChatFrame(user);
+            add(chat, BorderLayout.EAST);
+            chatFrames.put(user.getId(), chat);
+            chat.build();
         });
-    }
-
-    @Override
-    public void build() {
-        setComponentsStyle();
-        addComponentsToContainer();
-        addListeners();
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(800, 500));
-        setResizable(false);
-        setVisible(true);
     }
 }
