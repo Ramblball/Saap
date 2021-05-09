@@ -1,5 +1,6 @@
 package view.auth;
 
+import com.sun.tools.javac.Main;
 import controller.UserController;
 import controller.exceptions.AuthException;
 import http.payload.Login;

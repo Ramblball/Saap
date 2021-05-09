@@ -31,6 +31,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
     JButton sendButton = new JButton(ViewLiterals.SEND_BUTTON);
 
     public ChatFrame(User mate) {
+        super(mate.getName());
         chatController = new ChatController(mate, messageTextArea);
     }
 
