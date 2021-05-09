@@ -79,18 +79,32 @@ public class MainFrame extends JFrame implements Frame {
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
-            Friend friend = new Friend(result.toString().trim());
-            User user;
-            try {
-                user = ChatController.getFriendInfo(friend);
-            } catch (NotFoundException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage());
-                return;
+            if (result != null) {
+                openChat(result.toString().trim());
             }
+        });
+    }
+
+    private void openChat(String friendName) {
+        Friend friend = new Friend(friendName);
+        User user;
+        try {
+            user = ChatController.getFriendInfo(friend);
+        } catch (NotFoundException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            return;
+        }
+        chatFrames.values().forEach(f -> f.setVisible(false));
+        if (chatFrames.containsKey(user.getId())) {
+            ChatFrame frame = chatFrames.get(user.getId());
+            add(frame, BorderLayout.EAST);
+            frame.setVisible(true);
+        } else {
             ChatFrame chat = new ChatFrame(user);
             add(chat, BorderLayout.EAST);
             chatFrames.put(user.getId(), chat);
             chat.build();
-        });
+            chat.toFront();
+        }
     }
 }

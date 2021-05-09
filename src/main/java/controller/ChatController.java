@@ -31,7 +31,7 @@ public class ChatController {
 
     public ChatController(User user, JTextArea chatField) {
         mate = user;
-        client = new StompClient();
+        client = StompClient.getInstance();
         messageWaiter = new Thread(() -> {
             SynchronousQueue<Message> queue = StompHandler.getQueue(mate.getId());
             while (true) {
@@ -45,7 +45,6 @@ public class ChatController {
                 }
             }
         }, "MESSAGE_WAITER_" + mate.getName());
-        client.connect();
         messageWaiter.start();
     }
 
@@ -67,5 +66,9 @@ public class ChatController {
             throw new NotFoundException("Пользователь с таким именем не найден");
         }
         return gson.fromJson(response.get(), User.class);
+    }
+
+    public void close() {
+        messageWaiter.interrupt();
     }
 }

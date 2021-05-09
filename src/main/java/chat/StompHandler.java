@@ -26,7 +26,6 @@ public class StompHandler extends StompSessionHandlerAdapter {
     public void handleFrame(StompHeaders headers, Object payload) {
         Message message = (Message) payload;
         addMessage(message);
-
     }
 
     @Override
@@ -51,10 +50,17 @@ public class StompHandler extends StompSessionHandlerAdapter {
 
     private void addMessage(Message message) {
         try {
-            if (!messages.containsKey(message.getSenderId())) {
-                messages.put(message.getSenderId(), new SynchronousQueue<>());
+            if (message.getSenderName().equals(UserController.getUser().getName())) {
+                if (!messages.containsKey(message.getReceiverId())) {
+                    messages.put(message.getReceiverId(), new SynchronousQueue<>());
+                }
+                messages.get(message.getReceiverId()).put(message);
+            } else {
+                if (!messages.containsKey(message.getSenderId())) {
+                    messages.put(message.getSenderId(), new SynchronousQueue<>());
+                }
+                messages.get(message.getSenderId()).put(message);
             }
-            messages.get(message.getSenderId()).put(message);
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }

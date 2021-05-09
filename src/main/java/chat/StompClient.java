@@ -1,6 +1,5 @@
 package chat;
 
-import http.HTTPRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -8,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import model.Message;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
-import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -21,20 +19,28 @@ public class StompClient {
 
     private static final String URL = "ws://superappserver.herokuapp.com/ws";
 
+    private static StompClient instance;
+
     WebSocketClient client = new StandardWebSocketClient();
     WebSocketStompClient stompClient = new WebSocketStompClient(client);
     StompSessionHandler sessionHandler = new StompHandler();
     @NonFinal StompSession session;
 
-    public StompClient() {
+    private StompClient() {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        connect();
+    }
+
+    public static StompClient getInstance() {
+        if (instance == null) {
+            instance = new StompClient();
+        }
+        return instance;
     }
 
     public void connect() {
         try {
-            WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-            headers.add("Authorization", HTTPRequest.getToken());
-            session = stompClient.connect(URL, headers, sessionHandler).get();
+            session = stompClient.connect(URL, sessionHandler).get();
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage(), e);
         }
