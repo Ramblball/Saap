@@ -1,6 +1,7 @@
 package view.main;
 
 import controller.ChatController;
+import controller.UserController;
 import controller.exceptions.NotFoundException;
 import http.payload.Friend;
 import lombok.AccessLevel;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
 import view.chat.ChatFrame;
+import view.service.weather.APIOpenWeather;
+import view.service.weather.MainWeather;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,8 +24,9 @@ public class MainFrame extends JFrame implements Frame {
     Box serviceVBox = Box.createVerticalBox();
     Box chatVBox = Box.createVerticalBox();
 
-    JButton addChatButton = new JButton();
-    JButton datingButton = new JButton();
+    private final JButton addChatButton = new JButton();
+    private final JButton datingButton = new JButton();
+    private final JButton weatherButton = new JButton();
 
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
@@ -41,14 +45,12 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void setComponentsStyle() {
-        try {
-            setButtonStyle(datingButton,
-                    getClass().getClassLoader().getResource("images/defB.png").getFile(),
-                    getClass().getClassLoader().getResource("images/toB.png").getFile());
-        } catch (NullPointerException ex) {
-            log.error(ex.getMessage(), ex);
-            System.exit(0);
-        }
+        datingButton.setText("dating");
+        addChatButton.setSize(new Dimension(50, 50));
+        addChatButton.setText("PLUS");
+        addChatButton.setSize(new Dimension(50, 50));
+        weatherButton.setText("weather");
+        weatherButton.setSize(new Dimension(50, 50));
         addChatButton.setText("PLUS");
         chatVBox.setSize(new Dimension(100, 400));
     }
@@ -71,6 +73,7 @@ public class MainFrame extends JFrame implements Frame {
         add(chatVBox);
         chatVBox.add(addChatButton);
         serviceVBox.add(datingButton);
+        serviceVBox.add(weatherButton);
     }
 
     @Override
@@ -82,6 +85,9 @@ public class MainFrame extends JFrame implements Frame {
             if (result != null) {
                 openChat(result.toString().trim());
             }
+        });
+        weatherButton.addActionListener(e -> {
+            MainWeather.main();
         });
     }
 
