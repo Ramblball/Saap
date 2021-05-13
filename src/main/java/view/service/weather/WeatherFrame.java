@@ -2,7 +2,6 @@ package view.service.weather;
 
 import controller.UserController;
 import model.User;
-import view.Frame;
 
 import javax.swing.*;
 
@@ -28,9 +27,8 @@ public class WeatherFrame extends JFrame implements Frame {
     }
 
     private void openWeather(){
-        User user;
-        APIOpenWeather apiOpenWeather = new APIOpenWeather();
-        user = UserController.getUser();
+        WeatherParser apiOpenWeather = new APIOpenWeather();
+        User user = UserController.getUser();
         JOptionPane.showMessageDialog(this, apiOpenWeather.getReadyForecast(user.getCity()));
     }
 }

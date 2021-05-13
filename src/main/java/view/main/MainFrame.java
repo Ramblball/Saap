@@ -1,7 +1,6 @@
 package view.main;
 
 import controller.ChatController;
-import controller.UserController;
 import controller.exceptions.NotFoundException;
 import http.payload.Friend;
 import lombok.AccessLevel;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
 import view.chat.ChatFrame;
-import view.service.weather.APIOpenWeather;
 import view.service.weather.MainWeather;
 
 import javax.swing.*;
@@ -46,12 +44,11 @@ public class MainFrame extends JFrame implements Frame {
     @Override
     public void setComponentsStyle() {
         datingButton.setText("dating");
-        addChatButton.setSize(new Dimension(50, 50));
-        addChatButton.setText("PLUS");
-        addChatButton.setSize(new Dimension(50, 50));
+        datingButton.setSize(new Dimension(50, 50));
         weatherButton.setText("weather");
         weatherButton.setSize(new Dimension(50, 50));
         addChatButton.setText("PLUS");
+        addChatButton.setSize(new Dimension(50, 50));
         chatVBox.setSize(new Dimension(100, 400));
     }
 
