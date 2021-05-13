@@ -1,6 +1,6 @@
-package view.dating;
+package view.service.DatingService;
 
-import view.Frame;
+import view.service.DatingService.Frame;
 import view.ViewLiterals;
 
 import javax.swing.*;
@@ -22,6 +22,9 @@ public class DatingFrame extends JFrame implements Frame {
     public void setComponentsStyle() {
         informationPanel.setBounds(50, 28, 304, 345);
         informationPanel.setBackground(new Color(196, 196, 196));
+        likeButton.setText("LIKE");
+        chatButton.setText("CHAT");
+        skipButton.setText("SKIP");
         likeButton.setBounds(59, 412, 71, 70);
         chatButton.setBounds(162, 412, 72, 72);
         skipButton.setBounds(273, 412, 72, 72);
@@ -40,7 +43,9 @@ public class DatingFrame extends JFrame implements Frame {
 
     @Override
     public void addListeners() {
-
+        backButton.addActionListener(e -> {
+            dispose();
+        });
     }
 
     @Override
@@ -49,7 +54,7 @@ public class DatingFrame extends JFrame implements Frame {
         addComponentsToContainer();
         addListeners();
         this.setBounds(400, 400, 400, 600);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);

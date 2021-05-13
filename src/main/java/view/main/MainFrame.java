@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
 import view.chat.ChatFrame;
+import view.service.DatingService.DatingFrame;
+import view.service.DatingService.DatingMain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,14 +43,14 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void setComponentsStyle() {
-        try {
-            setButtonStyle(datingButton,
-                    getClass().getClassLoader().getResource("images/defB.png").getFile(),
-                    getClass().getClassLoader().getResource("images/toB.png").getFile());
-        } catch (NullPointerException ex) {
-            log.error(ex.getMessage(), ex);
-            System.exit(0);
-        }
+//        try {
+//            setButtonStyle(datingButton,
+//                    getClass().getClassLoader().getResource("images/defB.png").getFile(),
+//                    getClass().getClassLoader().getResource("images/toB.png").getFile());
+//        } catch (NullPointerException ex) {
+//            log.error(ex.getMessage(), ex);
+//            System.exit(0);
+//        }
         addChatButton.setText("PLUS");
         chatVBox.setSize(new Dimension(100, 400));
     }
@@ -75,7 +77,9 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void addListeners() {
-        datingButton.addActionListener(e -> log.info("user open dating"));
+        datingButton.addActionListener(e -> {
+            DatingMain.main();
+        });
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
