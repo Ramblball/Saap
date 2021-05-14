@@ -37,7 +37,7 @@ public class APIOpenWeather implements WeatherParser {
             DateTimeFormatter.ofPattern("dd (MMMM) в HH:mm :");
 
     private final static String URL_STRING =
-            "https://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=d97a349114c8783aa4c0f7884f74ba63\n";
+            "https://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=d97a349114c8783aa4c0f7884f74ba63";
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -53,7 +53,7 @@ public class APIOpenWeather implements WeatherParser {
             Optional<String> jsonRawData = downloadJsonRawData(city);
             jsonRawData.map(s -> convertRawDataToList(s).get());
             String result = String.format("%s:%s%s", city, System.lineSeparator(),
-                    jsonRawData);
+                    jsonRawData.toString());
             return result;
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);
