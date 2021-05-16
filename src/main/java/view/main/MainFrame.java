@@ -1,6 +1,7 @@
 package view.main;
 
 import controller.ChatController;
+import controller.UserController;
 import controller.exceptions.NotFoundException;
 import http.payload.Friend;
 import lombok.AccessLevel;
@@ -83,8 +84,11 @@ public class MainFrame extends JFrame implements Frame {
                 openChat(result.toString().trim());
             }
         });
+        User user = UserController.getUser();
+        String[] arg = new String[1];
+        arg[0] = user.getCity();
         weatherButton.addActionListener(e -> {
-            MainWeather.main();
+            MainWeather.main(arg);
         });
     }
 
