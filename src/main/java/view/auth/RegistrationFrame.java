@@ -129,10 +129,7 @@ public class RegistrationFrame extends JFrame implements Frame {
     }
 
     private void invokeMain() {
-        SwingUtilities.invokeLater(() -> {
-            MainFrame main = new MainFrame();
-            main.build();
-        });
+        SwingUtilities.invokeLater(MainFrame::buildInstance);
         dispose();
     }
 }

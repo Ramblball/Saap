@@ -1,6 +1,5 @@
 package view.auth;
 
-import com.sun.tools.javac.Main;
 import controller.UserController;
 import controller.exceptions.AuthException;
 import http.payload.Login;
@@ -109,10 +108,7 @@ public class LoginFrame extends JFrame implements Frame {
     }
 
     private void invokeMain() {
-        SwingUtilities.invokeLater(() -> {
-            MainFrame main = new MainFrame();
-            main.build();
-        });
+        SwingUtilities.invokeLater(MainFrame::buildInstance);
         dispose();
     }
 }

@@ -1,7 +1,6 @@
 package http.request;
 
 import http.HTTPRequest;
-import http.HttpLiterals;
 import http.Request;
 import http.PayLoad;
 import http.payload.Token;
@@ -19,7 +18,6 @@ public class LoginRequest extends HTTPRequest implements Request {
     public Optional<String> send(PayLoad object) {
         String data = gson.toJson(object);
         HttpRequest.Builder request = HttpRequest.newBuilder()
-                .header(HttpLiterals.CONTENT_TYPE, HttpLiterals.APPLICATION_JSON)
                 .POST(HttpRequest.BodyPublishers.ofString(data));
         log.info(PATH + " -> POST -> " + data);
         Optional<String> response = makeRequest(request, PATH);

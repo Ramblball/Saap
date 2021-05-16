@@ -1,6 +1,6 @@
 package view.main;
 
-import controller.ChatController;
+import controller.UserController;
 import controller.exceptions.NotFoundException;
 import http.payload.Friend;
 import lombok.AccessLevel;
@@ -17,14 +17,27 @@ import java.util.HashMap;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame implements Frame {
+    private static final UserController userController = new UserController();
 
-    Box serviceVBox = Box.createVerticalBox();
-    Box chatVBox = Box.createVerticalBox();
+    private static MainFrame instance;
+
+    Box verticalBox = Box.createVerticalBox();
 
     JButton addChatButton = new JButton();
-    JButton datingButton = new JButton();
+    JButton serviceButton = new JButton();
 
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
+
+    private MainFrame() {
+    }
+
+    public static MainFrame buildInstance() {
+        if (instance == null) {
+            instance = new MainFrame();
+            instance.build();
+        }
+        return instance;
+    }
 
     @Override
     public void build() {
@@ -41,70 +54,64 @@ public class MainFrame extends JFrame implements Frame {
 
     @Override
     public void setComponentsStyle() {
-        try {
-            setButtonStyle(datingButton,
-                    getClass().getClassLoader().getResource("images/defB.png").getFile(),
-                    getClass().getClassLoader().getResource("images/toB.png").getFile());
-        } catch (NullPointerException ex) {
-            log.error(ex.getMessage(), ex);
-            System.exit(0);
-        }
+        serviceButton.setPreferredSize(new Dimension(100, 50));
+        serviceButton.setText("Сервисы");
         addChatButton.setText("PLUS");
-        chatVBox.setSize(new Dimension(100, 400));
-    }
-
-    private void setButtonStyle(JButton button, String imagePath, String pressedImagePath) {
-        button.setIcon(new ImageIcon(imagePath));
-        button.setPressedIcon(new ImageIcon(pressedImagePath));
-        button.setSize(10, 10);
-
-        // Убираем все ненужные рамки и закраску
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setHideActionText(false);
     }
 
     @Override
     public void addComponentsToContainer() {
-        add(serviceVBox, BorderLayout.WEST);
-        add(chatVBox);
-        chatVBox.add(addChatButton);
-        serviceVBox.add(datingButton);
+        add(verticalBox, BorderLayout.WEST);
+        verticalBox.add(serviceButton);
+        verticalBox.add(addChatButton);
     }
 
     @Override
     public void addListeners() {
-        datingButton.addActionListener(e -> log.info("user open dating"));
+        serviceButton.addActionListener(e -> log.info("user open dating"));
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
             if (result != null) {
-                openChat(result.toString().trim());
+                startChat(result.toString().trim());
             }
         });
     }
 
-    private void openChat(String friendName) {
-        Friend friend = new Friend(friendName);
-        User user;
+    public void startChat(String name) {
         try {
-            user = ChatController.getFriendInfo(friend);
+            Friend friend = new Friend(name);
+            User friendUser = userController.getFriendInfo(friend);
+            if (chatFrames.containsKey(friendUser.getId())) {
+                openChat(friendUser.getId());
+            } else {
+                startNewChat(friendUser);
+            }
         } catch (NotFoundException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-            return;
         }
+    }
+
+    private void startNewChat(User friend) {
+        hideAllChats();
+        ChatFrame chat = new ChatFrame(friend);
+        JButton chatButton = new JButton();
+        chatButton.setText(friend.getName());
+        verticalBox.add(chatButton);
+        add(chat, BorderLayout.EAST);
+        chatFrames.put(friend.getId(), chat);
+        chatButton.addActionListener(e -> openChat(friend.getId()));
+        chat.build();
+    }
+
+    private void openChat(String friendId) {
+        hideAllChats();
+        ChatFrame frame = chatFrames.get(friendId);
+        add(frame, BorderLayout.EAST);
+        frame.setVisible(true);
+    }
+
+    private void hideAllChats() {
         chatFrames.values().forEach(f -> f.setVisible(false));
-        if (chatFrames.containsKey(user.getId())) {
-            ChatFrame frame = chatFrames.get(user.getId());
-            add(frame, BorderLayout.EAST);
-            frame.setVisible(true);
-        } else {
-            ChatFrame chat = new ChatFrame(user);
-            add(chat, BorderLayout.EAST);
-            chatFrames.put(user.getId(), chat);
-            chat.build();
-            chat.toFront();
-        }
     }
 }
