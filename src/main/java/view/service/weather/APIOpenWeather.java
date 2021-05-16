@@ -51,9 +51,9 @@ public class APIOpenWeather implements WeatherParser {
     public String getReadyForecast(String city) {
         try {
             Optional<String> jsonRawData = downloadJsonRawData(city);
-            jsonRawData.map(s -> convertRawDataToList(s).get());
+            //jsonRawData.map(s -> convertRawDataToList(s).get());
             String result = String.format("%s:%s%s", city, System.lineSeparator(),
-                    jsonRawData.toString());
+                    parseForecastDataFromList(convertRawDataToList(jsonRawData.get())).get());
             return result;
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);
@@ -131,12 +131,12 @@ public class APIOpenWeather implements WeatherParser {
      * @return Готовый текстовый формат выводимой информации
      * @throws Exception
      */
-    private Optional<String> parseForecastDataFromList(List<String> weatherList){
+    private Optional<String> parseForecastDataFromList(Optional<List<String>> weatherList){
         final StringBuffer sb = new StringBuffer();
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            for (String line : weatherList) {
+            for (String line : weatherList.get()) {
                     String dateTime;
                     JsonNode mainNode;
                     JsonNode weatherArrNode;
@@ -182,7 +182,7 @@ public class APIOpenWeather implements WeatherParser {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("%s   %s %s %s%s").append(formattedDateTime).append(formattedTemperature)
+        stringBuilder.append(formattedDateTime).append(formattedTemperature)
                 .append(formattedDescription).append(weatherIconCode).append(System.lineSeparator());
         return stringBuilder.toString();
     }
