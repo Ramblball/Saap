@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class StompClient {
 
     private static final String URL = "ws://superappserver.herokuapp.com/ws";
+    private static final String SEND_PATH = "/app/chat";
 
     private static StompClient instance;
 
@@ -40,13 +41,18 @@ public class StompClient {
 
     public void connect() {
         try {
-            session = stompClient.connect(URL, sessionHandler).get();
+            session = stompClient
+                    .connect(URL, sessionHandler)
+                    .get();
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage(), e);
         }
     }
 
     public void send(Message message) {
-        session.send("/app/chat", message);
+        if (!session.isConnected()) {
+            connect();
+        }
+        session.send(SEND_PATH, message);
     }
 }

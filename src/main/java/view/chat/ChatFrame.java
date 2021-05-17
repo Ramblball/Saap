@@ -23,7 +23,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
     ChatController chatController;
 
     JTextArea messageTextArea = new JTextArea();
-    JTextField enterMessageAskField = new JTextField(ViewLiterals.ENTER_MESSAGE_FIELD);
+    JTextField enterMessageAskField = new JTextField();
 
     JScrollPane scrollPane = new JScrollPane(messageTextArea);
     JPanel bottomPanel = new JPanel(new BorderLayout());
