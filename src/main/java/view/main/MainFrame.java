@@ -90,10 +90,6 @@ public class MainFrame extends Frame implements IFrame {
                 startChat(result.toString().trim());
             }
         });
-        String[] args = new String[0];
-        weatherButton.addActionListener(e -> {
-            MainWeather.main(args);
-        });
     }
 
     public void startChat(String name) {

@@ -11,7 +11,7 @@ import http.request.PutAddPermissionRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import service.Permission;
+import jmxapi.Permission;
 import view.main.MainFrame;
 
 import javax.swing.*;

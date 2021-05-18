@@ -1,26 +1,29 @@
-package service.weather;
+package service.weather.view;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import service.weather.WeatherLiterals;
+import service.weather.controller.WeatherController;
 
 import javax.swing.*;
 import java.awt.*;
 
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WeatherFrame extends JFrame implements Frame {
 
-    private WeatherContoller weatherContoller = new WeatherContoller();
+    private static final WeatherController weatherController = new WeatherController();
 
-    private Container container = getContentPane();
+    Container container = getContentPane();
 
-    private JTextField cityField = new JTextField();
+    JTextField cityField = new JTextField();
 
-    private final JLabel cityLabel = new JLabel(WeatherLiterals.CITY_LABEL);
+    JLabel cityLabel = new JLabel(WeatherLiterals.CITY_LABEL);
 
-    private final JButton weatherFindButton = new JButton(WeatherLiterals.WEATHER_BUTTON);
+    JButton weatherFindButton = new JButton(WeatherLiterals.WEATHER_BUTTON);
 
-    private final JButton exit = new JButton(WeatherLiterals.EXIT);
-
-    private final  JTextArea weatherTextArea = new JTextArea();
+    JTextArea weatherTextArea = new JTextArea();
 
 
     @Override
@@ -28,7 +31,6 @@ public class WeatherFrame extends JFrame implements Frame {
         cityField.setBounds(100, 10, 150, 30);
         cityLabel.setBounds(50, 10, 100, 30);
         weatherFindButton.setBounds(100, 40, 150, 30);
-        exit.setBounds(50,300,150,30);
         container.setLayout(null);
         weatherTextArea.setBounds(300, 10, 300, 400);
         weatherTextArea.setEditable(false);
@@ -37,7 +39,6 @@ public class WeatherFrame extends JFrame implements Frame {
     @Override
     public void addComponentsToContainer() {
         container.add(cityLabel);
-        container.add(exit);
         container.add(cityField);
         container.add(weatherFindButton);
         container.add(weatherTextArea);
@@ -48,28 +49,22 @@ public class WeatherFrame extends JFrame implements Frame {
         weatherFindButton.addActionListener(e ->{
             String cityText = cityField.getText();
             System.out.println(cityText);
-            if (cityText.equals("")) {
+            if (cityText.trim().equals("")) {
                 JOptionPane.showMessageDialog(this, WeatherLiterals.EMPTY_FIELDS_DIALOG);
             }else{
-                weatherTextArea.setText(weatherContoller.getWeather(cityText));
+                weatherTextArea.setText(weatherController.getWeather(cityText));
             }
-        });
-        exit.addActionListener(e ->{
-            setVisible(false);
         });
     }
 
     @Override
     public void build() {
-        String weather = weatherContoller.getUserWeather();
-        if (weather != null){
-            weatherTextArea.setText(weatherContoller.getUserWeather());
-        }
+        weatherTextArea.setText(weatherController.getUserWeather());
         setComponentsStyle();
         addComponentsToContainer();
         addListeners();
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(800, 500));
         setResizable(false);
         setVisible(true);

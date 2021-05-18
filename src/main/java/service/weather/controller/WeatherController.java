@@ -1,27 +1,54 @@
 package service.weather.controller;
 
-import controller.UserController;
-import model.User;
+import lombok.extern.slf4j.Slf4j;
 import service.weather.api.APIOpenWeather;
 import service.weather.api.WeatherParser;
+import service.weather.exception.JMXException;
 
-public class WeatherContoller {
+import javax.management.MalformedObjectNameException;
+import java.io.IOException;
+import java.util.Optional;
 
-    private final User city = UserController.getUser();
-    private final WeatherParser apiOpenWeather = new APIOpenWeather();
+@Slf4j
+public class WeatherController {
+
+    private static final String TOKEN = "60a2419576789c0321851e41";
+    private static final String NAME = "Weather";
+    private static final String LOCATION_PERMISSION = "LOCATION";
+
+    private static final WeatherParser apiOpenWeather = new APIOpenWeather();
+
+    private JMXController jmxController;
 
     public String getUserWeather() {
-        String weather = null;
-        if(city != null){
-            weather = getWeather(city.getCity());
+        try {
+            jmxController = JMXController.getInstance();
+            if (hasPermission() || askPermission()) {
+                return getWeather(getLocation().orElseThrow(JMXException::new));
+            }
+        } catch (IOException | MalformedObjectNameException | JMXException e) {
+            log.error(e.getMessage(),e);
         }
-        return weather;
+        return "";
+    }
+
+    private Optional<String> getLocation() {
+        String city = jmxController.getBean().getLocation(TOKEN);
+        if (city == null) {
+            return Optional.empty();
+        }
+        return Optional.of(city);
+    }
+
+    private boolean hasPermission() {
+        return jmxController.getBean().hasPermission(TOKEN, LOCATION_PERMISSION);
+    }
+
+    private boolean askPermission() {
+        return jmxController.getBean().askPermission(TOKEN, NAME, LOCATION_PERMISSION);
     }
 
     public String getWeather(String city){
-        String weather = apiOpenWeather.getReadyForecast(city);
-        return weather;
+        return apiOpenWeather.getReadyForecast(city);
     }
-
-    private static final String token = "60a2419576789c0321851e41";
 }

@@ -1,4 +1,4 @@
-package service.weather;
+package service.weather.view;
 
 public interface Frame {
 

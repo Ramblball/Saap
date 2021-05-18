@@ -1,10 +1,11 @@
-package service.weather;
-
+package service.weather.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import service.weather.exception.ParseException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,14 +47,15 @@ public class APIOpenWeather implements WeatherParser {
     public String getReadyForecast(String city) {
         try {
             Optional<String> jsonRawData = downloadJsonRawData(city);
-            //jsonRawData.map(s -> convertRawDataToList(s).get());
             String result = String.format("%s:%s%s", city, System.lineSeparator(),
-                    parseForecastDataFromList(convertRawDataToList(jsonRawData.get())).get());
+                    parseForecastDataFromList(
+                            convertRawDataToList(
+                                    jsonRawData
+                                            .orElseThrow(ParseException::new))
+                                    .orElseThrow(ParseException::new))
+                            .orElseThrow(ParseException::new));
             return result;
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage(), e);
-            return String.format("Не могу найти \"%s\" город.", city);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
             return "Услуга недоступна, пожалуйста, попробуйте позже";
@@ -65,7 +67,6 @@ public class APIOpenWeather implements WeatherParser {
      *
      * @param city
      * @return Ответ с сайта openweathermap.org
-     * @throws Exception
      */
     private Optional<String> downloadJsonRawData(String city) {
         try {
@@ -80,15 +81,13 @@ public class APIOpenWeather implements WeatherParser {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 404) {
-                throw new NotFoundException();
+            if (response.statusCode() == 200) {
+                return Optional.of(response.body());
             }
-
-            return Optional.of(response.body());
-        } catch (NotFoundException | IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             log.error(e.getMessage(), e);
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     /**
@@ -124,27 +123,26 @@ public class APIOpenWeather implements WeatherParser {
      *
      * @param weatherList
      * @return Готовый текстовый формат выводимой информации
-     * @throws Exception
      */
-    private Optional<String> parseForecastDataFromList(Optional<List<String>> weatherList){
-        final StringBuffer sb = new StringBuffer();
+    private Optional<String> parseForecastDataFromList(List<String> weatherList) {
+        StringBuilder sb = new StringBuilder();
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            for (String line : weatherList.get()) {
-                    String dateTime;
-                    JsonNode mainNode;
-                    JsonNode weatherArrNode;
-                        mainNode = objectMapper.readTree(line).get("main");
-                        weatherArrNode = objectMapper.readTree(line).get("weather");
-                        for (final JsonNode objNode : weatherArrNode) {
-                            dateTime = objectMapper.readTree(line).get("dt_txt").toString();
-                            sb.append(formatForecastData(dateTime, objNode.get("main").toString(),
-                                    mainNode.get("temp").asDouble()));
-                        }
+            for (String line : weatherList) {
+                String dateTime;
+                JsonNode mainNode;
+                JsonNode weatherArrNode;
+                mainNode = objectMapper.readTree(line).get("main");
+                weatherArrNode = objectMapper.readTree(line).get("weather");
+                for (final JsonNode objNode : weatherArrNode) {
+                    dateTime = objectMapper.readTree(line).get("dt_txt").toString();
+                    sb.append(formatForecastData(dateTime, objNode.get("main").toString(),
+                            mainNode.get("temp").asDouble()));
+                }
             }
             return Optional.of(sb.toString());
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Optional.empty();
         }
@@ -157,29 +155,22 @@ public class APIOpenWeather implements WeatherParser {
      * @param description
      * @param temperature
      * @return Строчки с данными о дне, месяце, времени, температуры, состояния погоды
-     * @throws Exception
      */
-    private static String formatForecastData(String dateTime, String description, double temperature){
+    private static String formatForecastData(String dateTime, String description, double temperature) {
         LocalDateTime forecastDateTime = LocalDateTime.parse(dateTime.replaceAll("\"", ""), INPUT_DATE_TIME_FORMAT);
         String formattedDateTime = forecastDateTime.format(OUTPUT_DATE_TIME_FORMAT);
 
-        String formattedTemperature;
         long roundedTemperature = Math.round(temperature);
-        if (roundedTemperature > 0) {
-            formattedTemperature = "+" + Math.round(temperature);
-        } else {
-            formattedTemperature = String.valueOf(Math.round(temperature));
-        }
+        String formattedTemperature = roundedTemperature > 0
+                ? "+" + roundedTemperature
+                : String.valueOf(roundedTemperature);
 
         String formattedDescription = description.replaceAll("\"", "");
 
         String weatherIconCode = WeatherUtils.weatherIconsCodes.get(formattedDescription);
 
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(formattedDateTime).append(formattedTemperature)
-                .append(formattedDescription).append(weatherIconCode).append(System.lineSeparator());
-        return stringBuilder.toString();
+        return formattedDateTime + formattedTemperature +
+                formattedDescription + weatherIconCode + System.lineSeparator();
     }
 }
 

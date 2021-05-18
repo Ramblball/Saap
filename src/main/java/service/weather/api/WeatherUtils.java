@@ -1,4 +1,4 @@
-package service.weather;
+package service.weather.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 public class WeatherUtils {
     public final static Map<String, String> weatherIconsCodes = new HashMap<>();
 
-    /**
-     * Конструктор для состояния погоды
+    /*
+      Конструктор для состояния погоды
      */
     static {
         weatherIconsCodes.put("Clear", "☀");

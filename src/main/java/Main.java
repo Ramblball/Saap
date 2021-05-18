@@ -1,5 +1,5 @@
 import lombok.extern.slf4j.Slf4j;
-import service.Service;
+import jmxapi.Service;
 import view.IFrame;
 import view.auth.LoginFrame;
 
