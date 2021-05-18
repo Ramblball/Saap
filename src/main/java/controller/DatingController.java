@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -17,12 +18,12 @@ import java.util.Optional;
 public class DatingController {
     private static final Gson gson = new Gson();
 
-    public static User GetUserList(DatingUser datingUser) throws NotFoundException {
+    public static List<User> GetUserList(DatingUser datingUser) throws NotFoundException {
         Request request = new UserListRequest();
         Optional<String> response = request.send(datingUser);
         if (response.isEmpty()){
-            throw new NotFoundException("Пользователя в вашем городе не найдено");
+            throw new NotFoundException("Пользователей в вашем городе не найдено");
         }
-        return gson.fromJson(response.get(), User.class);
+        return gson.fromJson(response.get(), List.class);
     }
 }

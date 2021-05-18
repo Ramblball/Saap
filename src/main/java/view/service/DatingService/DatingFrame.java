@@ -10,6 +10,7 @@ import view.ViewLiterals;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class DatingFrame extends JFrame implements Frame {
     private final JPanel informationPanel = new JPanel();
@@ -57,14 +58,13 @@ public class DatingFrame extends JFrame implements Frame {
         });
         skipButton.addActionListener(e -> {
             DatingUser datingUser = new DatingUser(cityName.getText());
-            User user;
+            List<User> users;
             try {
-                user = DatingController.GetUserList(datingUser);
+                users = DatingController.GetUserList(datingUser);
             } catch (NotFoundException notFoundException) {
                 JOptionPane.showMessageDialog(this, notFoundException.getMessage());
                 return;
             }
-
         });
     }
 
