@@ -20,4 +20,7 @@ public final class ViewLiterals {
 
     // Литералы для Чата
     public static final String SEND_BUTTON = "Отправить";
+
+    //Литералы для сервиса знакомств
+    public static final String BACK_TO_MAIN_MENU = "Назад";
 }
