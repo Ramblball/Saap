@@ -1,21 +1,18 @@
 package view.service.weather;
 
-import controller.UserController;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.security.PublicKey;
 
 @Slf4j
 public class WeatherFrame extends JFrame implements Frame {
 
-    private  WeatherParser apiOpenWeather = new APIOpenWeather();
+    private WeatherContoller weatherContoller = new WeatherContoller();
 
-    protected Container container = getContentPane();
+    private Container container = getContentPane();
 
-    protected JTextField cityField = new JTextField();
+    private JTextField cityField = new JTextField();
 
     private final JLabel cityLabel = new JLabel(WeatherLiterals.CITY_LABEL);
 
@@ -25,7 +22,6 @@ public class WeatherFrame extends JFrame implements Frame {
 
     private final  JTextArea weatherTextArea = new JTextArea();
 
-    protected String cityUser;
 
     @Override
     public void setComponentsStyle() {
@@ -55,7 +51,7 @@ public class WeatherFrame extends JFrame implements Frame {
             if (cityText.equals("")) {
                 JOptionPane.showMessageDialog(this, WeatherLiterals.EMPTY_FIELDS_DIALOG);
             }else{
-                weatherTextArea.setText(apiOpenWeather.getReadyForecast(cityText));
+                weatherTextArea.setText(weatherContoller.getWeather(cityText));
             }
         });
         exit.addActionListener(e ->{
@@ -64,10 +60,10 @@ public class WeatherFrame extends JFrame implements Frame {
     }
 
     @Override
-    public void build(String city) {
-        if(city != null) {
-            cityUser = city;
-            weatherTextArea.setText(apiOpenWeather.getReadyForecast(cityUser));
+    public void build() {
+        String weather = weatherContoller.getUserWeather();
+        if (weather != null){
+            weatherTextArea.setText(weatherContoller.getUserWeather());
         }
         setComponentsStyle();
         addComponentsToContainer();

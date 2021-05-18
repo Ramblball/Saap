@@ -20,5 +20,5 @@ public interface Frame {
     /**
      * Метод для сборки и настройки параметров окна
      */
-    void build(String city);
+    void build();
 }
