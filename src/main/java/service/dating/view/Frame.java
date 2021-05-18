@@ -1,4 +1,4 @@
-package view.service.DatingService;
+package service.dating.view;
 
 public interface Frame {
 

@@ -10,8 +10,6 @@ import model.User;
 import view.Frame;
 import view.IFrame;
 import view.chat.ChatFrame;
-import service.weather.MainWeather;
-import view.service.DatingService.DatingMain;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
