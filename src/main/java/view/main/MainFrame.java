@@ -1,32 +1,52 @@
 package view.main;
 
-import controller.ChatController;
+import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.payload.Friend;
+import http.payload.FieldReq;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
+import view.IFrame;
 import view.chat.ChatFrame;
 import service.weather.MainWeather;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.util.HashMap;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MainFrame extends JFrame implements Frame {
+public class MainFrame extends Frame implements IFrame {
 
-    Box serviceVBox = Box.createVerticalBox();
-    Box chatVBox = Box.createVerticalBox();
+    private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
+    private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
 
-    private final JButton addChatButton = new JButton();
-    private final JButton datingButton = new JButton();
-    private final JButton weatherButton = new JButton();
+    private static final UserController userController = new UserController();
+
+    private static MainFrame instance;
+
+    Box verticalBox = Box.createVerticalBox();
+
+
+    JButton addChatButton = new JButton();
+    JButton serviceButton = new JButton();
 
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
+
+    private MainFrame() {
+        super("SApp");
+    }
+
+    public static MainFrame buildInstance() {
+        if (instance == null) {
+            instance = new MainFrame();
+            instance.build();
+        }
+        return instance;
+    }
 
     @Override
     public void build() {
@@ -41,46 +61,33 @@ public class MainFrame extends JFrame implements Frame {
         pack();
     }
 
-    @Override
-    public void setComponentsStyle() {
-        datingButton.setText("dating");
-        datingButton.setSize(new Dimension(50, 50));
-        weatherButton.setText("weather");
-        weatherButton.setSize(new Dimension(50, 50));
+    protected void setComponentsStyle() {
+        serviceButton.setPreferredSize(new Dimension(100, 50));
+        serviceButton.setText("Test");
         addChatButton.setText("PLUS");
-        addChatButton.setSize(new Dimension(50, 50));
-        chatVBox.setSize(new Dimension(100, 400));
     }
 
-    private void setButtonStyle(JButton button, String imagePath, String pressedImagePath) {
-        button.setIcon(new ImageIcon(imagePath));
-        button.setPressedIcon(new ImageIcon(pressedImagePath));
-        button.setSize(10, 10);
-
-        // Убираем все ненужные рамки и закраску
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setHideActionText(false);
+    protected void addComponentsToContainer() {
+        add(verticalBox, BorderLayout.WEST);
+        verticalBox.add(serviceButton);
+        verticalBox.add(addChatButton);
     }
 
-    @Override
-    public void addComponentsToContainer() {
-        add(serviceVBox, BorderLayout.WEST);
-        add(chatVBox);
-        chatVBox.add(addChatButton);
-        serviceVBox.add(datingButton);
-        serviceVBox.add(weatherButton);
-    }
-
-    @Override
-    public void addListeners() {
-        datingButton.addActionListener(e -> log.info("user open dating"));
+    protected void addListeners() {
+        serviceButton.addActionListener(e -> {
+            try {
+                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
+                Process p = pb.inheritIO().start();
+                System.out.println(p.waitFor());
+            } catch (IOException | InterruptedException ex) {
+                log.error(ex.getMessage(), ex);
+            }
+        });
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
             if (result != null) {
-                openChat(result.toString().trim());
+                startChat(result.toString().trim());
             }
         });
         String[] args = new String[0];
@@ -89,26 +96,40 @@ public class MainFrame extends JFrame implements Frame {
         });
     }
 
-    private void openChat(String friendName) {
-        Friend friend = new Friend(friendName);
-        User user;
+    public void startChat(String name) {
         try {
-            user = ChatController.getFriendInfo(friend);
+            FieldReq userField = new FieldReq(name);
+            User friendUser = userController.getFriendInfo(userField);
+            if (chatFrames.containsKey(friendUser.getId())) {
+                openChat(friendUser.getId());
+            } else {
+                startNewChat(friendUser);
+            }
         } catch (NotFoundException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-            return;
         }
+    }
+
+    private void startNewChat(User friend) {
+        hideAllChats();
+        ChatFrame chat = new ChatFrame(friend);
+        JButton chatButton = new JButton();
+        chatButton.setText(friend.getName());
+        verticalBox.add(chatButton);
+        add(chat, BorderLayout.EAST);
+        chatFrames.put(friend.getId(), chat);
+        chatButton.addActionListener(e -> openChat(friend.getId()));
+        chat.build();
+    }
+
+    private void openChat(String friendId) {
+        hideAllChats();
+        ChatFrame frame = chatFrames.get(friendId);
+        add(frame, BorderLayout.EAST);
+        frame.setVisible(true);
+    }
+
+    private void hideAllChats() {
         chatFrames.values().forEach(f -> f.setVisible(false));
-        if (chatFrames.containsKey(user.getId())) {
-            ChatFrame frame = chatFrames.get(user.getId());
-            add(frame, BorderLayout.EAST);
-            frame.setVisible(true);
-        } else {
-            ChatFrame chat = new ChatFrame(user);
-            add(chat, BorderLayout.EAST);
-            chatFrames.put(user.getId(), chat);
-            chat.build();
-            chat.toFront();
-        }
     }
 }
