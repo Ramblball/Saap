@@ -10,6 +10,7 @@ import model.User;
 import view.Frame;
 import view.IFrame;
 import view.chat.ChatFrame;
+import service.weather.MainWeather;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +29,7 @@ public class MainFrame extends Frame implements IFrame {
     private static MainFrame instance;
 
     Box verticalBox = Box.createVerticalBox();
+
 
     JButton addChatButton = new JButton();
     JButton serviceButton = new JButton();
@@ -87,6 +89,10 @@ public class MainFrame extends Frame implements IFrame {
             if (result != null) {
                 startChat(result.toString().trim());
             }
+        });
+        String[] args = new String[0];
+        weatherButton.addActionListener(e -> {
+            MainWeather.main(args);
         });
     }
 
