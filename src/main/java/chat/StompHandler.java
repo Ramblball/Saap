@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import view.main.MainFrame;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.concurrent.SynchronousQueue;
 
 @Slf4j
 public class StompHandler extends StompSessionHandlerAdapter {
+
+    private static final String MESSAGE_PATH = "/user/%s/queue/messages";
 
     private static final HashMap<String, SynchronousQueue<Message>> messages = new HashMap<>();
 
@@ -31,7 +34,7 @@ public class StompHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         log.info("New session: " + session.getSessionId());
-        String url = "/user/" + UserController.getUser().getId() + "/queue/messages";
+        String url = String.format(MESSAGE_PATH, UserController.getUser().getId());
         session.subscribe(url, this);
         log.info("Subscribe to: " + url);
     }
@@ -53,11 +56,13 @@ public class StompHandler extends StompSessionHandlerAdapter {
             if (message.getSenderName().equals(UserController.getUser().getName())) {
                 if (!messages.containsKey(message.getReceiverId())) {
                     messages.put(message.getReceiverId(), new SynchronousQueue<>());
+                    MainFrame.buildInstance().startChat(message.getReceiverName());
                 }
                 messages.get(message.getReceiverId()).put(message);
             } else {
                 if (!messages.containsKey(message.getSenderId())) {
                     messages.put(message.getSenderId(), new SynchronousQueue<>());
+                    MainFrame.buildInstance().startChat(message.getSenderName());
                 }
                 messages.get(message.getSenderId()).put(message);
             }

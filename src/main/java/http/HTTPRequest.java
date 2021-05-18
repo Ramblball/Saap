@@ -1,14 +1,16 @@
 package http;
 
 import static java.net.http.HttpRequest.Builder;
+import static java.net.http.HttpResponse.BodyHandlers;
 
 import com.google.gson.Gson;
-import http.payload.Token;
+import http.payload.TokenRes;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
@@ -18,9 +20,13 @@ import java.util.Optional;
  */
 @Slf4j
 public abstract class HTTPRequest {
+
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String URI_LINK = "https://superappserver.herokuapp.com";
+
     protected final Gson gson = new Gson();
     private final HttpClient client = HttpClient.newHttpClient();
-    private static final String URI_LINK = "https://superappserver.herokuapp.com";
     private static String token;
 
     /**
@@ -32,17 +38,8 @@ public abstract class HTTPRequest {
      */
     public Optional<String> makeRequest(Builder request, String path) {
         try {
-            URI link = URI.create(URI_LINK + path);
-
-            request = request
-                    .uri(link)
-                    .timeout(Duration.ofMinutes(1))
-                    .header(HttpLiterals.CONTENT_TYPE, HttpLiterals.APPLICATION_JSON);
-            if (token != null) {
-                request = request.header("Authorization", token);
-            }
             HttpResponse<String> response =
-                    client.send(request.build(), HttpResponse.BodyHandlers.ofString());
+                    client.send(buildRequest(request, path), BodyHandlers.ofString());
             log.info(response.statusCode() + " -> " + response.body());
             if (response.statusCode() == 200) {
                 return Optional.of(response.body());
@@ -53,11 +50,18 @@ public abstract class HTTPRequest {
         return Optional.empty();
     }
 
-    public static void setToken(Token token) {
-        HTTPRequest.token = token.getPrefix() + token.getToken();
+    private HttpRequest buildRequest(Builder request, String path) {
+        request = request
+                .uri(URI.create(URI_LINK + path))
+                .timeout(Duration.ofMinutes(1))
+                .header(CONTENT_TYPE, APPLICATION_JSON);
+        if (token != null) {
+            request = request.header("Authorization", token);
+        }
+        return request.build();
     }
 
-    public static String getToken() {
-        return token;
+    public void setToken(TokenRes token) {
+        HTTPRequest.token = token.getPrefix() + token.getToken();
     }
 }

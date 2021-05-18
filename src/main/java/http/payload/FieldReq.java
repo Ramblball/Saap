@@ -7,6 +7,6 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Friend implements PayLoad {
-    String name;
+public class FieldReq implements PayLoad {
+    String value;
 }
