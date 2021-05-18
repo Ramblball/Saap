@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
 import view.chat.ChatFrame;
-import view.service.weather.MainWeather;
+import service.weather.MainWeather;
 
 import javax.swing.*;
 import java.awt.*;

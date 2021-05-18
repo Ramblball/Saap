@@ -1,7 +1,9 @@
-package view.service.weather;
+package service.weather.controller;
 
 import controller.UserController;
 import model.User;
+import service.weather.api.APIOpenWeather;
+import service.weather.api.WeatherParser;
 
 public class WeatherContoller {
 

@@ -1,6 +1,8 @@
-package view.service.weather;
+package service.weather;
 
 import lombok.extern.slf4j.Slf4j;
+import service.weather.view.Frame;
+import service.weather.view.WeatherFrame;
 
 @Slf4j
 public class MainWeather {

@@ -1,4 +1,4 @@
-package view.service.weather;
+package service.weather;
 
 public class WeatherLiterals {
     public static final String CITY_LABEL = "Город";

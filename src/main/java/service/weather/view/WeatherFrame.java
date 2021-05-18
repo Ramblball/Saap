@@ -1,4 +1,4 @@
-package view.service.weather;
+package service.weather;
 
 import lombok.extern.slf4j.Slf4j;
 

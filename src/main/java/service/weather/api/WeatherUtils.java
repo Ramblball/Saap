@@ -1,4 +1,4 @@
-package view.service.weather;
+package service.weather;
 
 import java.util.HashMap;
 import java.util.Map;
