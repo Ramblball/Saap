@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.Frame;
+import view.IFrame;
 import view.ViewLiterals;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ import java.awt.event.FocusEvent;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ChatFrame extends JInternalFrame implements Frame {
+public class ChatFrame extends JInternalFrame implements IFrame {
 
     ChatController chatController;
 
@@ -47,22 +47,19 @@ public class ChatFrame extends JInternalFrame implements Frame {
         setVisible(true);
     }
 
-    @Override
-    public void setComponentsStyle() {
+    protected void setComponentsStyle() {
         messageTextArea.setEditable(false);
         messageTextArea.setLineWrap(true);
     }
 
-    @Override
-    public void addComponentsToContainer() {
+    protected void addComponentsToContainer() {
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
         bottomPanel.add(sendButton, BorderLayout.EAST);
         bottomPanel.add(enterMessageAskField, BorderLayout.CENTER);
     }
 
-    @Override
-    public void addListeners() {
+    protected void addListeners() {
         sendButton.addActionListener(e -> {
             if (!enterMessageAskField.getText().trim().isEmpty()) {
                 sendMessage();

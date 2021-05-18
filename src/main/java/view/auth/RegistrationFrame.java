@@ -2,8 +2,9 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.payload.Register;
+import http.payload.RegisterReq;
 import view.Frame;
+import view.IFrame;
 import view.ViewLiterals;
 import view.main.MainFrame;
 
@@ -13,7 +14,7 @@ import java.awt.*;
 /**
  * Класс окна регистрации
  */
-public class RegistrationFrame extends JFrame implements Frame {
+public class RegistrationFrame extends Frame implements IFrame {
 
     protected static final UserController auth = new UserController();
     // Диапазон допустимых возрастов
@@ -62,8 +63,7 @@ public class RegistrationFrame extends JFrame implements Frame {
         pack();
     }
 
-    @Override
-    public void setComponentsStyle() {
+    protected void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 115, 100, 30);
         userTextField.setBounds(150, 115, 150, 30);
@@ -77,8 +77,7 @@ public class RegistrationFrame extends JFrame implements Frame {
         signupButton.setBounds(150, 300, 150, 30);
     }
 
-    @Override
-    public void addComponentsToContainer() {
+    protected void addComponentsToContainer() {
         container.add(userLabel);
         container.add(userTextField);
         container.add(cityLabel);
@@ -91,8 +90,7 @@ public class RegistrationFrame extends JFrame implements Frame {
         container.add(signupButton);
     }
 
-    @Override
-    public void addListeners() {
+    protected void addListeners() {
         ageBox.addActionListener(e -> age = (Integer) ageBox.getSelectedItem());
         signupButton.addActionListener(e -> {
             String userText = userTextField.getText();
@@ -103,7 +101,7 @@ public class RegistrationFrame extends JFrame implements Frame {
             } else {
                 try {
                     auth.register(
-                            Register.builder()
+                            RegisterReq.builder()
                                     .name(userText)
                                     .password(passwordText)
                                     .city(cityText)

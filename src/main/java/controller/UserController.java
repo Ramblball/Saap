@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import controller.exceptions.AuthException;
 import controller.exceptions.NotFoundException;
 import http.Request;
-import http.payload.Friend;
-import http.payload.Login;
-import http.payload.Register;
-import http.request.LoginRequest;
-import http.request.RegisterRequest;
-import http.request.UserRequest;
-import http.request.addChatRequest;
+import http.payload.FieldReq;
+import http.payload.LoginReq;
+import http.payload.RegisterReq;
+import http.request.PostLoginRequest;
+import http.request.PostRegisterRequest;
+import http.request.GetUserRequest;
+import http.request.GetFriendInfoRequest;
 import model.User;
 
 import java.util.Optional;
@@ -37,8 +37,8 @@ public class UserController {
      * @param login             Данные для входа в систему
      * @throws AuthException    Ошибка при попытке авторизироваться
      */
-    public void authorize(Login login) throws AuthException {
-        Request request = new LoginRequest();
+    public void authorize(LoginReq login) throws AuthException {
+        Request request = new PostLoginRequest();
         Optional<String> response = request.send(login);
         response.orElseThrow(() -> new AuthException(AUTHORIZE_EXCEPTION));
         setUserInfo();
@@ -49,8 +49,8 @@ public class UserController {
      * @param register          Данные для регистрации
      * @throws AuthException    Ошибка при попытке регисрации
      */
-    public void register(Register register) throws AuthException {
-        Request request = new RegisterRequest();
+    public void register(RegisterReq register) throws AuthException {
+        Request request = new PostRegisterRequest();
         Optional<String> response = request.send(register);
         response.orElseThrow(() -> new AuthException(REGISTRATION_EXCEPTION));
         setUserInfo();
@@ -61,7 +61,7 @@ public class UserController {
      * @throws AuthException    Ошибка при загрузке данных
      */
     private void setUserInfo() throws AuthException {
-        Request request = new UserRequest();
+        Request request = new GetUserRequest();
         Optional<String> response = request.send(null);
         if (response.isEmpty()) {
             throw new AuthException(GET_USER_EXCEPTION);
@@ -69,8 +69,8 @@ public class UserController {
         user = gson.fromJson(response.get(), User.class);
     }
 
-    public User getFriendInfo(Friend friend) throws NotFoundException {
-        Request request = new addChatRequest();
+    public User getFriendInfo(FieldReq friend) throws NotFoundException {
+        Request request = new GetFriendInfoRequest();
         Optional<String> response = request.send(friend);
         if (response.isEmpty()) {
             throw new NotFoundException(GET_FRIEND_EXCEPTION);
