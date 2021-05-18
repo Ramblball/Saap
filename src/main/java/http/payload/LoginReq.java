@@ -8,11 +8,8 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Register implements PayLoad {
-
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class LoginReq implements PayLoad {
     String name;
     String password;
-    String city;
-    Integer age;
 }

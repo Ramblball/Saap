@@ -2,21 +2,27 @@ package view.main;
 
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.payload.Friend;
+import http.payload.FieldReq;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.Frame;
+import view.IFrame;
 import view.chat.ChatFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.util.HashMap;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MainFrame extends JFrame implements Frame {
+public class MainFrame extends Frame implements IFrame {
+
+    private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
+    private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
+
     private static final UserController userController = new UserController();
 
     private static MainFrame instance;
@@ -29,6 +35,7 @@ public class MainFrame extends JFrame implements Frame {
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
     private MainFrame() {
+        super("SApp");
     }
 
     public static MainFrame buildInstance() {
@@ -52,23 +59,28 @@ public class MainFrame extends JFrame implements Frame {
         pack();
     }
 
-    @Override
-    public void setComponentsStyle() {
+    protected void setComponentsStyle() {
         serviceButton.setPreferredSize(new Dimension(100, 50));
-        serviceButton.setText("Сервисы");
+        serviceButton.setText("Test");
         addChatButton.setText("PLUS");
     }
 
-    @Override
-    public void addComponentsToContainer() {
+    protected void addComponentsToContainer() {
         add(verticalBox, BorderLayout.WEST);
         verticalBox.add(serviceButton);
         verticalBox.add(addChatButton);
     }
 
-    @Override
-    public void addListeners() {
-        serviceButton.addActionListener(e -> log.info("user open dating"));
+    protected void addListeners() {
+        serviceButton.addActionListener(e -> {
+            try {
+                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
+                Process p = pb.inheritIO().start();
+                System.out.println(p.waitFor());
+            } catch (IOException | InterruptedException ex) {
+                log.error(ex.getMessage(), ex);
+            }
+        });
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
@@ -80,8 +92,8 @@ public class MainFrame extends JFrame implements Frame {
 
     public void startChat(String name) {
         try {
-            Friend friend = new Friend(name);
-            User friendUser = userController.getFriendInfo(friend);
+            FieldReq userField = new FieldReq(name);
+            User friendUser = userController.getFriendInfo(userField);
             if (chatFrames.containsKey(friendUser.getId())) {
                 openChat(friendUser.getId());
             } else {

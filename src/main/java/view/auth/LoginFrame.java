@@ -2,8 +2,9 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.payload.Login;
+import http.payload.LoginReq;
 import view.Frame;
+import view.IFrame;
 import view.ViewLiterals;
 import view.main.MainFrame;
 
@@ -13,7 +14,7 @@ import java.awt.*;
 /**
  * Класс окна входа
  */
-public class LoginFrame extends JFrame implements Frame {
+public class LoginFrame extends Frame implements IFrame {
 
     protected static final UserController auth = new UserController();
 
@@ -46,8 +47,7 @@ public class LoginFrame extends JFrame implements Frame {
         pack();
     }
 
-    @Override
-    public void setComponentsStyle() {
+    protected void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 150, 100, 30);
         passwordLabel.setBounds(50, 220, 100, 30);
@@ -58,8 +58,9 @@ public class LoginFrame extends JFrame implements Frame {
         registryButton.setBounds(150, 350, 150, 30);
     }
 
-    @Override
-    public void addComponentsToContainer() {
+
+
+    protected void addComponentsToContainer() {
         container.add(userLabel);
         container.add(passwordLabel);
         container.add(userTextField);
@@ -69,8 +70,7 @@ public class LoginFrame extends JFrame implements Frame {
         container.add(registryButton);
     }
 
-    @Override
-    public void addListeners() {
+    protected void addListeners() {
         loginButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
@@ -79,7 +79,7 @@ public class LoginFrame extends JFrame implements Frame {
             } else {
                 try {
                     auth.authorize(
-                            Login.builder()
+                            LoginReq.builder()
                                     .name(userText)
                                     .password(passwordText)
                                     .build()

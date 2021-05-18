@@ -4,7 +4,7 @@ import static java.net.http.HttpRequest.Builder;
 import static java.net.http.HttpResponse.BodyHandlers;
 
 import com.google.gson.Gson;
-import http.payload.Token;
+import http.payload.TokenRes;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ public abstract class HTTPRequest {
         return request.build();
     }
 
-    public void setToken(Token token) {
+    public void setToken(TokenRes token) {
         HTTPRequest.token = token.getPrefix() + token.getToken();
     }
 }

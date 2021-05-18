@@ -35,7 +35,6 @@ public class StompHandler extends StompSessionHandlerAdapter {
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         log.info("New session: " + session.getSessionId());
         String url = String.format(MESSAGE_PATH, UserController.getUser().getId());
-        session.setAutoReceipt(true);
         session.subscribe(url, this);
         log.info("Subscribe to: " + url);
     }
@@ -56,14 +55,14 @@ public class StompHandler extends StompSessionHandlerAdapter {
         try {
             if (message.getSenderName().equals(UserController.getUser().getName())) {
                 if (!messages.containsKey(message.getReceiverId())) {
-                    MainFrame.buildInstance().startChat(message.getReceiverId());
                     messages.put(message.getReceiverId(), new SynchronousQueue<>());
+                    MainFrame.buildInstance().startChat(message.getReceiverName());
                 }
                 messages.get(message.getReceiverId()).put(message);
             } else {
                 if (!messages.containsKey(message.getSenderId())) {
-                    MainFrame.buildInstance().startChat(message.getSenderName());
                     messages.put(message.getSenderId(), new SynchronousQueue<>());
+                    MainFrame.buildInstance().startChat(message.getSenderName());
                 }
                 messages.get(message.getSenderId()).put(message);
             }
