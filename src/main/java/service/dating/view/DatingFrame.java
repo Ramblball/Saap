@@ -19,6 +19,10 @@ public class DatingFrame extends JFrame implements Frame {
 
     private static final String CHAT_DENIED_MESSAGE = "Пользователь запретил переписку с ним";
 
+    private static final String NO_MORE_USERS = "В вашем городе больше нет пользователей";
+
+    private static User user;
+
     private static final DatingController datingController = new DatingController();
 
     @NonFinal private Iterator<User> users;
@@ -28,7 +32,9 @@ public class DatingFrame extends JFrame implements Frame {
     JButton likeButton = new JButton();
     JButton chatButton = new JButton();
     JButton skipButton = new JButton();
-    JTextField cityName = new JTextField();
+    JLabel userAgeLabel = new JLabel();
+    JLabel userCityLabel = new JLabel();
+    JLabel userNameLabel = new JLabel();
 
     public DatingFrame() {
         super("Dating app");
@@ -45,8 +51,9 @@ public class DatingFrame extends JFrame implements Frame {
         chatButton.setBounds(162, 412, 72, 72);
         skipButton.setBounds(273, 412, 72, 72);
         backButton.setBounds(57, 515, 290, 50);
-        cityName.setBounds(100, 380, 200, 30);
-        cityName.setText("Город");
+        userNameLabel.setBounds(80, 50, 100, 50);
+        userAgeLabel.setBounds(80, 80, 50, 50);
+        userCityLabel.setBounds(80, 100, 100, 50);
     }
 
     @Override
@@ -57,19 +64,31 @@ public class DatingFrame extends JFrame implements Frame {
         this.add(likeButton);
         this.add(backButton);
         this.add(informationPanel);
-        this.add(cityName);
+        informationPanel.add(userNameLabel);
+        informationPanel.add(userAgeLabel);
+        informationPanel.add(userCityLabel);
     }
 
     @Override
     public void addListeners() {
         backButton.addActionListener(e -> dispose());
         skipButton.addActionListener(e -> {
-            // TODO:Выведи юзера
-            users.next();
+            if (users.hasNext()) {
+                user = users.next();
+                var userName = user.getName();
+                var userCity = user.getCity();
+                var userAge = user.getAge();
+                userNameLabel.setText("Имя: " + userName);
+                userCityLabel.setText("Город: " + userCity);
+                userAgeLabel.setText("Возраст: " + userAge);
+            }
+            else
+                JOptionPane.showMessageDialog(this, NO_MORE_USERS);
         });
         chatButton.addActionListener(e -> {
-            if (!datingController.startChat(" ")) { // TODO:Передать id пользоваеля
-                JOptionPane.showMessageDialog(this, CHAT_DENIED_MESSAGE);
+            if (user != null)
+                if (!datingController.startChat(user.getId())) {
+                    JOptionPane.showMessageDialog(this, CHAT_DENIED_MESSAGE);
             }
         });
     }
