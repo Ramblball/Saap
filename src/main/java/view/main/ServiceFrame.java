@@ -1,5 +1,8 @@
 package view.main;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import view.Frame;
 import view.IFrame;
 
@@ -7,8 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.URL;
 
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceFrame extends Frame implements IFrame {
     private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
 
@@ -17,27 +22,12 @@ public class ServiceFrame extends Frame implements IFrame {
     @Override
     protected void setComponentsStyle() {
         container.setLayout(null);
-        JButton[] btn = new JButton[10];
-
-        String path = System.getProperty("user.dir") + "\\out\\artifacts\\Saap_jar";
-
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = getServices();
+        JButton[] btn = new JButton[listOfFiles.length];
         for (int i = 0; i < listOfFiles.length; ++i) {
             btn[i] = new JButton(listOfFiles[i].getName());
             btn[i].setBounds(10, i*50, 100, 30);
-            int finalI = i;
-            btn[i].addActionListener(e -> {
-                        Runtime re = Runtime.getRuntime();
-                        try{
-                            ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", path+listOfFiles[finalI].getName());
-                            Process p = pb.inheritIO().start();
-                            System.out.println(listOfFiles[finalI].getName());
-                            System.out.println(p.waitFor());
-                        } catch (IOException | InterruptedException ex){
-                            ex.printStackTrace();
-                        }
-                    });
+            addListener(btn[i], listOfFiles[i]);
             container.add(btn[i]);
         }
     }
@@ -54,12 +44,34 @@ public class ServiceFrame extends Frame implements IFrame {
     @Override
     public void build() {
         setComponentsStyle();
-        addComponentsToContainer();
-        addListeners();
 
         setPreferredSize(new Dimension(200, 800));
         setResizable(false);
         setVisible(true);
         pack();
+    }
+
+    private File[] getServices() {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        URL url = loader.getResource("services");
+        if (url == null) {
+            log.error("something going wrong");
+            dispose();
+        }
+        String path = url.getPath();
+        return new File(path).listFiles();
+    }
+
+    private void addListener(JButton button, File file) {
+        button.addActionListener(e -> {
+            try{
+                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", file.getAbsolutePath());
+                Process p = pb.inheritIO().start();
+                System.out.println(file.getName());
+                System.out.println(p.waitFor());
+            } catch (IOException | InterruptedException ex){
+                ex.printStackTrace();
+            }
+        });
     }
 }

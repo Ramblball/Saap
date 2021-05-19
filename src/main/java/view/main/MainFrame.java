@@ -10,8 +10,6 @@ import model.User;
 import view.Frame;
 import view.IFrame;
 import view.chat.ChatFrame;
-import service.weather.MainWeather;
-import view.service.DatingService.DatingMain;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -22,7 +20,7 @@ import java.util.HashMap;
 public class MainFrame extends Frame implements IFrame {
 
     private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
-    private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
+    private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/Weather/Weather.jar";
 
     private static final UserController userController = new UserController();
 
@@ -75,13 +73,14 @@ public class MainFrame extends Frame implements IFrame {
 
     protected void addListeners() {
         serviceButton.addActionListener(e -> {
-            try {
-                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
-                Process p = pb.inheritIO().start();
-                System.out.println(p.waitFor());
-            } catch (IOException | InterruptedException ex) {
-                log.error(ex.getMessage(), ex);
-            }
+//            try {
+                new ServiceFrame().build();
+//                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
+//                Process p = pb.inheritIO().start();
+//                System.out.println(p.waitFor());
+//            } catch (IOException | InterruptedException ex) {
+//                log.error(ex.getMessage(), ex);
+//            }
         });
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
