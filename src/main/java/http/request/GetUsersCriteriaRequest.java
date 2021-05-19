@@ -4,25 +4,24 @@ import http.HTTPRequest;
 import http.HttpLiterals;
 import http.PayLoad;
 import http.Request;
-import http.payload.PermissionReq;
+import http.payload.CriteriaReq;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.Builder;
 import java.util.Optional;
 
 @Slf4j
-public class PutAddPermissionRequest extends HTTPRequest implements Request {
+public class GetUsersCriteriaRequest extends HTTPRequest implements Request {
 
-    private static final String PATH = "/permissions/add/%s";
+    private static final String PATH = "/service/list/%s/%s";
 
     @Override
     public Optional<String> send(PayLoad object) {
-        PermissionReq payload = (PermissionReq) object;
-        Builder request = HttpRequest.newBuilder()
+        CriteriaReq payload = (CriteriaReq) object;
+        HttpRequest.Builder request = HttpRequest.newBuilder()
                 .header(HttpLiterals.SERVICE_HEADER, payload.getServiceToken())
-                .PUT(HttpRequest.BodyPublishers.ofString(""));
-        String uri = String.format(PATH, payload.getPermission().toString());
+                .GET();
+        String uri = String.format(PATH, payload.getCriteria(), payload.getValue());
         log.info(uri + " -> PUT -> " + payload);
         return makeRequest(request, uri);
     }
