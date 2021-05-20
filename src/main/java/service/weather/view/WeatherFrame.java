@@ -9,6 +9,9 @@ import service.weather.controller.WeatherController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Класс главного окна погоды
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WeatherFrame extends JFrame implements Frame {
@@ -21,6 +24,9 @@ public class WeatherFrame extends JFrame implements Frame {
     JButton weatherFindButton = new JButton(WeatherLiterals.WEATHER_BUTTON);
     JTextArea weatherTextArea = new JTextArea();
 
+    /**
+     * Метод для настройки стилей
+     */
     private void setComponentsStyle() {
         container.setLayout(null);
         cityField.setBounds(100, 10, 150, 30);
@@ -30,6 +36,9 @@ public class WeatherFrame extends JFrame implements Frame {
         weatherTextArea.setEditable(false);
     }
 
+    /**
+     * Метод для добавления компонентов
+     */
     private void addComponentsToContainer() {
         container.add(cityLabel);
         container.add(cityField);
@@ -37,12 +46,16 @@ public class WeatherFrame extends JFrame implements Frame {
         container.add(weatherFindButton);
     }
 
+    /**
+     * Метод для добавления обработчиков
+     */
     private void addListeners() {
-        weatherFindButton.addActionListener(e ->{
+        // запрос погоды в введенном городе
+        weatherFindButton.addActionListener(e -> {
             String cityText = cityField.getText();
             if (cityText.trim().equals("")) {
                 JOptionPane.showMessageDialog(this, WeatherLiterals.EMPTY_FIELDS_DIALOG);
-            }else{
+            } else {
                 weatherTextArea.setText(weatherController.getWeather(cityText));
             }
         });

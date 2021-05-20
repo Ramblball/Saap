@@ -1,5 +1,8 @@
 package view;
 
+/**
+ * Интерфейс работы с окном
+ */
 public interface Frame {
 
     /**

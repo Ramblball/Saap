@@ -17,6 +17,7 @@ public class RegistrationFrame extends JFrame implements Frame {
     protected static final UserController auth = new UserController();
     // Диапазон допустимых возрастов
     private static final Integer[] ages = new Integer[88];
+
     static {
         for (int i = 12; i < 100; i++) {
             ages[i - 12] = i;
@@ -61,7 +62,10 @@ public class RegistrationFrame extends JFrame implements Frame {
         pack();
     }
 
-    protected void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 115, 100, 30);
         userTextField.setBounds(150, 115, 150, 30);
@@ -75,7 +79,10 @@ public class RegistrationFrame extends JFrame implements Frame {
         signupButton.setBounds(150, 300, 150, 30);
     }
 
-    protected void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         container.add(userLabel);
         container.add(userTextField);
         container.add(cityLabel);
@@ -88,8 +95,13 @@ public class RegistrationFrame extends JFrame implements Frame {
         container.add(signupButton);
     }
 
-    protected void addListeners() {
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
+        // Получение возраста из поля
         ageBox.addActionListener(e -> age = (Integer) ageBox.getSelectedItem());
+        // Регистрация пользовтаеля
         signupButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String cityText = cityTextField.getText();
@@ -115,6 +127,7 @@ public class RegistrationFrame extends JFrame implements Frame {
                 }
             }
         });
+        // Инверсия отображения пароля
         showPassword.addActionListener(e -> {
             if (showPassword.isSelected()) {
                 passwordField.setEchoChar((char) 0);

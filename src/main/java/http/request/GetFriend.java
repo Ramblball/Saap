@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на получение информации о собеседнике
+ */
 @Slf4j
 public class GetFriend extends AbstractRequest implements Request {
 

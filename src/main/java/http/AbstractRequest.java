@@ -21,8 +21,10 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractRequest {
 
+    // Заголовок указывающий тип данных в теле запроса
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
+    // Адрес сервера
     private static final String URI_LINK = "https://superappserver.herokuapp.com";
 
     protected final Gson gson = new Gson();
@@ -30,10 +32,10 @@ public abstract class AbstractRequest {
     private static String token;
 
     /**
-     * Метод составляющий запрос к серверу
+     * Метод для выполнения запроса к серверу
      *
      * @param request Данные для отправки
-     * @param path URI путь запроса
+     * @param path    URI путь запроса
      * @return Полученные данные
      */
     protected Optional<String> doRequest(Builder request, String path) {
@@ -50,6 +52,13 @@ public abstract class AbstractRequest {
         return Optional.empty();
     }
 
+    /**
+     * Метод для сбокри объекта запроса
+     *
+     * @param request Сборщик запроса
+     * @param path    url путь запроса
+     * @return Собранный запрос
+     */
     private HttpRequest buildRequest(Builder request, String path) {
         request = request
                 .uri(URI.create(URI_LINK + path))
@@ -61,6 +70,11 @@ public abstract class AbstractRequest {
         return request.build();
     }
 
+    /**
+     * Метод для сохранения токена авторизации в классе
+     *
+     * @param token Токен авторизации
+     */
     protected void setToken(TokenDto token) {
         AbstractRequest.token = token.getPrefix() + token.getToken();
     }

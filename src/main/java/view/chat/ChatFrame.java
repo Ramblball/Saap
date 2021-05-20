@@ -9,8 +9,6 @@ import view.Frame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 /**
  * Класс вложенного окна чата
@@ -25,10 +23,8 @@ public class ChatFrame extends JInternalFrame implements Frame {
 
     JTextArea messageTextArea = new JTextArea();
     JTextField enterMessageAskField = new JTextField();
-
     JScrollPane scrollPane = new JScrollPane(messageTextArea);
     JPanel bottomPanel = new JPanel(new BorderLayout());
-
     JButton sendButton = new JButton(SEND_BUTTON);
 
     public ChatFrame(User mate) {
@@ -48,11 +44,17 @@ public class ChatFrame extends JInternalFrame implements Frame {
         setVisible(true);
     }
 
+    /**
+     * Метод для настройки стилей
+     */
     private void setComponentsStyle() {
         messageTextArea.setEditable(false);
         messageTextArea.setLineWrap(true);
     }
 
+    /**
+     * Метод для добавления компонентов
+     */
     private void addComponentsToContainer() {
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -60,20 +62,21 @@ public class ChatFrame extends JInternalFrame implements Frame {
         bottomPanel.add(enterMessageAskField, BorderLayout.CENTER);
     }
 
+    /**
+     * Метод для добавления обработчиков
+     */
     private void addListeners() {
+        // Отправка сообщения
         sendButton.addActionListener(e -> {
             if (!enterMessageAskField.getText().trim().isEmpty()) {
                 sendMessage();
             }
         });
-        enterMessageAskField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                enterMessageAskField.setText("");
-            }
-        });
     }
 
+    /**
+     * Метод для отправки сообщения
+     */
     private void sendMessage() {
         String message = enterMessageAskField.getText().trim();
         chatController.send(message);

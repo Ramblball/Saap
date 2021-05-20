@@ -11,6 +11,9 @@ import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на авторизацию пользователя
+ */
 @Slf4j
 public class PostLogin extends AbstractRequest implements Request {
 

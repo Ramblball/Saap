@@ -45,20 +45,24 @@ public class LoginFrame extends JFrame implements Frame {
         pack();
     }
 
-    protected void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 150, 100, 30);
-        passwordLabel.setBounds(50, 220, 100, 30);
         userTextField.setBounds(150, 150, 150, 30);
+        passwordLabel.setBounds(50, 220, 100, 30);
         passwordField.setBounds(150, 220, 150, 30);
         showPassword.setBounds(150, 250, 150, 30);
         loginButton.setBounds(150, 300, 150, 30);
         registryButton.setBounds(150, 350, 150, 30);
     }
 
-
-
-    protected void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         container.add(userLabel);
         container.add(passwordLabel);
         container.add(userTextField);
@@ -68,7 +72,10 @@ public class LoginFrame extends JFrame implements Frame {
         container.add(registryButton);
     }
 
-    protected void addListeners() {
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
         loginButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
@@ -76,12 +83,7 @@ public class LoginFrame extends JFrame implements Frame {
                 JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
-                    auth.authorize(
-                            LoginDto.builder()
-                                    .name(userText)
-                                    .password(passwordText)
-                                    .build()
-                    );
+                    auth.authorize(new LoginDto(userText, passwordText));
                 } catch (AuthException exception) {
                     JOptionPane.showMessageDialog(this, exception.getMessage());
                 }
@@ -92,10 +94,12 @@ public class LoginFrame extends JFrame implements Frame {
                 }
             }
         });
+        // Переход к окну регистрации
         registryButton.addActionListener(e -> {
             setVisible(false);
             new RegistrationFrame().build();
         });
+        // Инверсия отображения пароля
         showPassword.addActionListener(e -> {
             if (showPassword.isSelected()) {
                 passwordField.setEchoChar((char) 0);
@@ -105,6 +109,9 @@ public class LoginFrame extends JFrame implements Frame {
         });
     }
 
+    /**
+     * Метод для открытия главного окна приложения
+     */
     private void invokeMain() {
         SwingUtilities.invokeLater(MainFrame::getInstance);
         dispose();

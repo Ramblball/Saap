@@ -8,16 +8,23 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.chat.ChatFrame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * Класс основного окна приложения.
+ * Реализует шаблон singleton
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame {
 
+    // Путь до компилятора java в системе
     private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
+    // Путь до скомпилированного сервиса
     private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
 
     private static final UserController userController = new UserController();
@@ -25,17 +32,20 @@ public class MainFrame extends JFrame {
     private static MainFrame instance;
 
     Box verticalBox = Box.createVerticalBox();
-
-
     JButton addChatButton = new JButton();
     JButton serviceButton = new JButton();
-
+    // Мапинг пользователя в окно чата с ним
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
     private MainFrame() {
         super("SApp");
     }
 
+    /**
+     * Метод для получения экземпляра главного окна
+     *
+     * @return Экземпляр главного окна
+     */
     public static MainFrame getInstance() {
         if (instance == null) {
             instance = new MainFrame();
@@ -56,19 +66,29 @@ public class MainFrame extends JFrame {
         pack();
     }
 
+    /**
+     * Метод для настройки стилей
+     */
     private void setComponentsStyle() {
         serviceButton.setPreferredSize(new Dimension(100, 50));
         serviceButton.setText("Test");
         addChatButton.setText("PLUS");
     }
 
+    /**
+     * Метод для добавления компонентов
+     */
     private void addComponentsToContainer() {
         add(verticalBox, BorderLayout.WEST);
         verticalBox.add(serviceButton);
         verticalBox.add(addChatButton);
     }
 
+    /**
+     * Метод для добавления обработчиков
+     */
     private void addListeners() {
+        // Открытие окна сервиса
         serviceButton.addActionListener(e -> {
             try {
                 ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
@@ -78,6 +98,7 @@ public class MainFrame extends JFrame {
                 log.error(ex.getMessage(), ex);
             }
         });
+        // Создание новго чата
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
@@ -87,6 +108,11 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Метод для открытия окна чата
+     *
+     * @param name Имя собеседника
+     */
     public void startChat(String name) {
         try {
             ParamDto userField = new ParamDto(name);
@@ -101,6 +127,11 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Метод для создания нового окна чата
+     *
+     * @param friend Пользователь-собеседник
+     */
     private void startNewChat(User friend) {
         hideAllChats();
         ChatFrame chat = new ChatFrame(friend);
@@ -113,6 +144,11 @@ public class MainFrame extends JFrame {
         chat.build();
     }
 
+    /**
+     * Метод для открытия уже существующего окна чата
+     *
+     * @param friendId Уникальный идентификатор пользователя-собеседника
+     */
     private void openChat(String friendId) {
         hideAllChats();
         ChatFrame frame = chatFrames.get(friendId);
@@ -120,6 +156,9 @@ public class MainFrame extends JFrame {
         frame.setVisible(true);
     }
 
+    /**
+     * Метод для скрытия всех окон чатов
+     */
     private void hideAllChats() {
         chatFrames.values().forEach(f -> f.setVisible(false));
     }

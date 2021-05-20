@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * DTO класс для регистрации пользователя
+ */
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

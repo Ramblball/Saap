@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * DTO класс для получения токена авторизации
+ */
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TokenDto {

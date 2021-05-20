@@ -25,7 +25,7 @@ public class UserController {
     private static final String GET_USER_EXCEPTION = "Невозможно загрузить данные пользователя";
     private static final String GET_FRIEND_EXCEPTION = "Пользователь с таким именем не найден";
     private static final Gson gson = new Gson();
-
+    // Объект пользователя
     private static User user;
 
     public static User getUser() {
@@ -34,8 +34,9 @@ public class UserController {
 
     /**
      * Метод для авторизации пользователя
-     * @param login             Данные для входа в систему
-     * @throws AuthException    Ошибка при попытке авторизироваться
+     *
+     * @param login Данные для входа в систему
+     * @throws AuthException Ошибка при попытке авторизироваться
      */
     public void authorize(LoginDto login) throws AuthException {
         Request request = new PostLogin();
@@ -46,8 +47,9 @@ public class UserController {
 
     /**
      * Метод для регистрации пользователя
-     * @param register          Данные для регистрации
-     * @throws AuthException    Ошибка при попытке регисрации
+     *
+     * @param register Данные для регистрации
+     * @throws AuthException Ошибка при попытке регисрации
      */
     public void register(RegisterDto register) throws AuthException {
         Request request = new PostRegister();
@@ -58,7 +60,8 @@ public class UserController {
 
     /**
      * Метод для получения данных о пользователе
-     * @throws AuthException    Ошибка при загрузке данных
+     *
+     * @throws AuthException Ошибка при загрузке данных
      */
     private void setUserInfo() throws AuthException {
         Request request = new GetUser();
@@ -67,6 +70,13 @@ public class UserController {
                 .orElseThrow(() -> new AuthException(GET_USER_EXCEPTION)), User.class);
     }
 
+    /**
+     * Метод для получения данных о собеседнике
+     *
+     * @param friend DTO объект с именем собеседника
+     * @return Объект пользователя-собеседника
+     * @throws NotFoundException Не удалось найти пользователя
+     */
     public User getFriendInfo(ParamDto friend) throws NotFoundException {
         Request request = new GetFriend();
         Optional<String> response = request.send(friend);

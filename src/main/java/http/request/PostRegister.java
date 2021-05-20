@@ -10,6 +10,9 @@ import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на регистрацию пользователя
+ */
 @Slf4j
 public class PostRegister extends AbstractRequest implements Request {
     private static final String PATH = "/auth/registration";

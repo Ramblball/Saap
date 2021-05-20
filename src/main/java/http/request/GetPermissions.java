@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на получение списка прав, доступных сервису
+ */
 @Slf4j
 public class GetPermissions extends AbstractRequest implements Request {
 

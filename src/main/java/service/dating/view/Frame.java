@@ -1,5 +1,8 @@
 package service.dating.view;
 
+/**
+ * Интерфейс, описывающий работу с окном
+ */
 public interface Frame {
 
     /**

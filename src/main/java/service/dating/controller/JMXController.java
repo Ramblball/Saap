@@ -11,6 +11,10 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 
+/**
+ * Класс контроллер для jmx соединения.
+ * Реализует шаблон singleton
+ */
 @Slf4j
 public class JMXController {
 
@@ -33,6 +37,12 @@ public class JMXController {
         return instance;
     }
 
+    /**
+     * Метод для подключения к основному приложению по jmx
+     *
+     * @throws IOException                  Ошибка разрыва соединения
+     * @throws MalformedObjectNameException Ошибка в имени интерфейса
+     */
     private void connection() throws IOException, MalformedObjectNameException {
         JMXServiceURL serviceURL = new JMXServiceURL(URL);
         JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, null);

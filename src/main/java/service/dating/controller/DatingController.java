@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс контроллер для приложения знакомств
+ */
 @Slf4j
 public class DatingController {
 
@@ -28,6 +31,11 @@ public class DatingController {
         }
     }
 
+    /**
+     * Метод для получения списка пользователей сервиса с параметром
+     *
+     * @return Список пользоваателей
+     */
     public List<User> getUsers() {
         try {
             if (hasPermission(Permission.LOCATION) || askPermission(Permission.LOCATION)) {
@@ -42,6 +50,12 @@ public class DatingController {
         return new ArrayList<>();
     }
 
+    /**
+     * Метод для открытия чата
+     *
+     * @return true - Сервис имеет право;
+     * false - Сервис не имеет права;
+     */
     public boolean startChat(String receiverId) {
         try {
             if (hasPermission(Permission.CHAT) || askPermission(Permission.CHAT)) {
@@ -54,6 +68,11 @@ public class DatingController {
         return false;
     }
 
+    /**
+     * Метод для получения геолокации пользователя
+     *
+     * @return Местоположение пользователя
+     */
     private Optional<String> getLocation() {
         String city = jmxController.getBean().getLocation(TOKEN);
         if (city == null) {
@@ -62,17 +81,36 @@ public class DatingController {
         return Optional.of(city);
     }
 
+    /**
+     * Метод для открытия чата
+     *
+     * @param receiverId Уникальный идентификатор собеседника
+     */
     private void openChat(String receiverId) throws JMXException {
         if (jmxController.getBean().openChat(TOKEN, receiverId)) {
             throw new JMXException();
         }
     }
 
+    /**
+     * Метод для проверки на наличие прав
+     *
+     * @param permission Право
+     * @return true - Сервис имеет право;
+     * false - Сервис не имеет права;
+     */
     private boolean hasPermission(Permission permission) {
         return jmxController.getBean()
                 .hasPermission(TOKEN, permission.toString());
     }
 
+    /**
+     * Метод для добавления права
+     *
+     * @param permission Право
+     * @return true - Разрешено;
+     * false - Отказано;
+     */
     private boolean askPermission(Permission permission) {
         return jmxController.getBean()
                 .askPermission(TOKEN, NAME, permission.toString());

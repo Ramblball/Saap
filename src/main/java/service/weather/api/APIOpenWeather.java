@@ -19,16 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс для преобразования данных о погоде
+ */
 @Slf4j
 public class APIOpenWeather implements WeatherParser {
-    /**
-     * Константа форматирования даты в апи
-     */
+
+    // Константа форматирования даты в апи
     private final static DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    /**
-     * Константа форматирования даты для вывода пользователю
-     */
+
+    // Константа форматирования даты для вывода пользователю
     private final static DateTimeFormatter OUTPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("dd (MMMM) в HH:mm :");
 
@@ -47,7 +48,7 @@ public class APIOpenWeather implements WeatherParser {
                                             .orElseThrow(NotFoundException::new))
                                     .orElseThrow(ParseException::new))
                             .orElseThrow(ParseException::new));
-        }catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             log.error(e.getMessage(), e);
             return "Не удалось найти указанный город";
         } catch (ParseException e) {
@@ -136,7 +137,7 @@ public class APIOpenWeather implements WeatherParser {
     /**
      * Формат выводимой информации о погоде
      *
-     * @param dateTime Время
+     * @param dateTime    Время
      * @param description Описание
      * @param temperature Температура
      * @return Строчки с данными о дне, месяце, времени, температуры, состояния погоды

@@ -1,5 +1,8 @@
 package service.weather.view;
 
+/**
+ * Интерфейс, описывающий работу с окном
+ */
 public interface Frame {
 
     /**

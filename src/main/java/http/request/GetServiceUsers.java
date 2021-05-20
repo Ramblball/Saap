@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на получение списка пользователей, использующих сервис
+ */
 @Slf4j
 public class GetServiceUsers extends AbstractRequest implements Request {
 

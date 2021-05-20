@@ -6,6 +6,9 @@ import service.weather.view.WeatherFrame;
 
 import javax.swing.*;
 
+/**
+ * Класс - точка входа сервиса погоды
+ */
 @Slf4j
 public class MainWeather {
     public static void main(String[] args) {

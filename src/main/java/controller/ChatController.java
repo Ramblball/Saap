@@ -11,19 +11,29 @@ import model.User;
 import javax.swing.*;
 import java.util.concurrent.SynchronousQueue;
 
+/**
+ * Класс контроллера для чатов
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatController {
 
-    // Идентификатор собеседника
+    // Объект собеседника
     User mate;
     // Экземпляр сокет соединения
     StompClient client;
 
+    /**
+     * Конструктор контроллера
+     *
+     * @param user      Объект собеседника
+     * @param chatField Поле окна для вывода сообщения
+     */
     public ChatController(User user, JTextArea chatField) {
         mate = user;
         client = StompClient.getInstance();
         // Поток считывающий сообщения собеседника
+        // Реализует шаблон producer/consumer
         Thread messageWaiter = new Thread(() -> {
             SynchronousQueue<Message> queue = StompHandler.getQueue(mate.getId());
             while (true) {
@@ -40,6 +50,11 @@ public class ChatController {
         messageWaiter.start();
     }
 
+    /**
+     * Метод для отправки сообщения
+     *
+     * @param text Текст сообщения
+     */
     public void send(String text) {
         Message message = Message.builder()
                 .senderId(UserController.getUser().getId())

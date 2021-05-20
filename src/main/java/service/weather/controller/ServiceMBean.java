@@ -4,6 +4,9 @@ import model.User;
 
 import java.util.List;
 
+/**
+ * Интерфейс взаимодействия с основным приложением
+ */
 public interface ServiceMBean {
 
     String getLocation(String serviceToken);

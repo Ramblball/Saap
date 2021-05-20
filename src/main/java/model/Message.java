@@ -3,6 +3,9 @@ package model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * Класс модели данных сообщения
+ */
 @Data
 @Builder
 @NoArgsConstructor

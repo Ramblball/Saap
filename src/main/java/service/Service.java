@@ -11,6 +11,9 @@ import view.main.MainFrame;
 
 import java.util.List;
 
+/**
+ * Класс реализации интерфейса взаимодействия с сервисами
+ */
 @Slf4j
 public class Service implements ServiceMBean {
 

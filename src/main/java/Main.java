@@ -7,6 +7,9 @@ import javax.management.*;
 import javax.swing.*;
 import java.lang.management.ManagementFactory;
 
+/**
+ * Класс - точка входа основного приложения
+ */
 @Slf4j
 public class Main {
 

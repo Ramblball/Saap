@@ -13,9 +13,13 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.concurrent.SynchronousQueue;
 
+/**
+ * Класс обработчик кадров WebSocket
+ */
 @Slf4j
 public class StompHandler extends StompSessionHandlerAdapter {
 
+    // Url путь для получения сообщений
     private static final String MESSAGE_PATH = "/user/%s/queue/messages";
 
     private static final HashMap<String, SynchronousQueue<Message>> messages = new HashMap<>();
@@ -50,6 +54,11 @@ public class StompHandler extends StompSessionHandlerAdapter {
         log.error(exception.getMessage(), exception);
     }
 
+    /**
+     * Метод для распределения сообщений по пользователям
+     *
+     * @param message Сообщение
+     */
     private void addMessage(Message message) {
         try {
             if (message.getSenderName().equals(UserController.getUser().getName())) {

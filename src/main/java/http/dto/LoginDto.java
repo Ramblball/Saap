@@ -2,13 +2,14 @@ package http.dto;
 
 import http.Dto;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * DTO класс для авторизации пользователя
+ */
 @Data
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LoginDto implements Dto {
 
     String name;
