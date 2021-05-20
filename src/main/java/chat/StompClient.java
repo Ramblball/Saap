@@ -39,7 +39,7 @@ public class StompClient {
         return instance;
     }
 
-    public void connect() {
+    private void connect() {
         try {
             session = stompClient
                     .connect(URL, sessionHandler)

@@ -1,6 +1,6 @@
-package http.payload;
+package http.dto;
 
-import http.PayLoad;
+import http.Dto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,8 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LoginReq implements PayLoad {
+public class LoginDto implements Dto {
+
     String name;
     String password;
 }

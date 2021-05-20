@@ -1,7 +1,7 @@
 package http.request;
 
-import http.HTTPRequest;
-import http.PayLoad;
+import http.AbstractRequest;
+import http.Dto;
 import http.Request;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,15 +9,15 @@ import java.net.http.HttpRequest;
 import java.util.Optional;
 
 @Slf4j
-public class GetUserRequest extends HTTPRequest implements Request {
+public class GetUser extends AbstractRequest implements Request {
 
     private static final String PATH = "/user/info";
 
     @Override
-    public Optional<String> send(PayLoad object) {
+    public Optional<String> send(Dto object) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .GET();
         log.info(PATH + " -> GET");
-        return makeRequest(request, PATH);
+        return doRequest(request, PATH);
     }
 }

@@ -2,14 +2,14 @@ package controller;
 
 import com.google.gson.Gson;
 import controller.exceptions.ServiceException;
-import http.PayLoad;
+import http.Dto;
 import http.Request;
-import http.payload.CriteriaReq;
-import http.payload.FieldReq;
-import http.payload.PermissionReq;
-import http.request.GetPermissionsRequest;
-import http.request.GetUsersCriteriaRequest;
-import http.request.PutAddPermissionRequest;
+import http.dto.CriteriaDto;
+import http.dto.ParamDto;
+import http.dto.PermissionDto;
+import http.request.GetPermissions;
+import http.request.GetServiceUsers;
+import http.request.PutAddPermission;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +32,6 @@ public class ServiceController {
 
     private static final Gson gson = new Gson();
 
-    private Set<String> getUserPermissions(String serviceToken) throws ServiceException, ClassCastException {
-        PayLoad payLoad = new FieldReq(serviceToken);
-        Request request = new GetPermissionsRequest();
-        Optional<String> response = request.send(payLoad);
-        return gson.fromJson(
-                response.orElseThrow(() -> new ServiceException(GET_PERMISSIONS_EXCEPTION)),
-                HashSet.class);
-    }
-
     public boolean hasPermission(String serviceToken, String permission) {
         try {
             Set<String> permissions = getUserPermissions(serviceToken);
@@ -59,9 +50,9 @@ public class ServiceController {
             if (askPermission(serviceName, permission) == 0) {
                 return false;
             }
-            PayLoad payLoad = new PermissionReq(serviceToken, permission);
-            Request request = new PutAddPermissionRequest();
-            Optional<String> response = request.send(payLoad);
+            Dto dto = new PermissionDto(serviceToken, permission);
+            Request request = new PutAddPermission();
+            Optional<String> response = request.send(dto);
             if (response.isEmpty()) {
                 throw new ServiceException(ADD_PERMISSIONS_EXCEPTION);
             }
@@ -74,9 +65,9 @@ public class ServiceController {
 
     public List<User> getUsers(String serviceToken, String field, String value) {
         try {
-            PayLoad payLoad = new CriteriaReq(serviceToken, field, value);
-            Request request = new GetUsersCriteriaRequest();
-            Optional<String> response = request.send(payLoad);
+            Dto dto = new CriteriaDto(serviceToken, field, value);
+            Request request = new GetServiceUsers();
+            Optional<String> response = request.send(dto);
             return gson.fromJson(
                     response.orElseThrow(() -> new ServiceException(GET_USERS_EXCEPTION)),
                     List.class
@@ -87,9 +78,18 @@ public class ServiceController {
         return new ArrayList<>();
     }
 
+    private Set<String> getUserPermissions(String serviceToken) throws ServiceException, ClassCastException {
+        Dto dto = new ParamDto(serviceToken);
+        Request request = new GetPermissions();
+        Optional<String> response = request.send(dto);
+        return gson.fromJson(
+                response.orElseThrow(() -> new ServiceException(GET_PERMISSIONS_EXCEPTION)),
+                HashSet.class);
+    }
+
     private int askPermission(String serviceName, String permission) {
         return JOptionPane.showConfirmDialog(
-                MainFrame.buildInstance(),
+                MainFrame.getInstance(),
                 String.format(Permission.getPermissions().get(permission), serviceName),
                 CONFIRM_TITLE,
                 JOptionPane.YES_NO_OPTION,

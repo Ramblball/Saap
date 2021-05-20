@@ -5,8 +5,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.IFrame;
-import view.ViewLiterals;
+import view.Frame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +17,9 @@ import java.awt.event.FocusEvent;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ChatFrame extends JInternalFrame implements IFrame {
+public class ChatFrame extends JInternalFrame implements Frame {
+
+    public static final String SEND_BUTTON = "Отправить";
 
     ChatController chatController;
 
@@ -28,7 +29,7 @@ public class ChatFrame extends JInternalFrame implements IFrame {
     JScrollPane scrollPane = new JScrollPane(messageTextArea);
     JPanel bottomPanel = new JPanel(new BorderLayout());
 
-    JButton sendButton = new JButton(ViewLiterals.SEND_BUTTON);
+    JButton sendButton = new JButton(SEND_BUTTON);
 
     public ChatFrame(User mate) {
         super(mate.getName());
@@ -47,19 +48,19 @@ public class ChatFrame extends JInternalFrame implements IFrame {
         setVisible(true);
     }
 
-    protected void setComponentsStyle() {
+    private void setComponentsStyle() {
         messageTextArea.setEditable(false);
         messageTextArea.setLineWrap(true);
     }
 
-    protected void addComponentsToContainer() {
+    private void addComponentsToContainer() {
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
         bottomPanel.add(sendButton, BorderLayout.EAST);
         bottomPanel.add(enterMessageAskField, BorderLayout.CENTER);
     }
 
-    protected void addListeners() {
+    private void addListeners() {
         sendButton.addActionListener(e -> {
             if (!enterMessageAskField.getText().trim().isEmpty()) {
                 sendMessage();

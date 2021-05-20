@@ -27,8 +27,7 @@ public class StompHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        Message message = (Message) payload;
-        addMessage(message);
+        addMessage((Message) payload);
     }
 
     @Override
@@ -55,20 +54,24 @@ public class StompHandler extends StompSessionHandlerAdapter {
         try {
             if (message.getSenderName().equals(UserController.getUser().getName())) {
                 if (!messages.containsKey(message.getReceiverId())) {
-                    messages.put(message.getReceiverId(), new SynchronousQueue<>());
-                    MainFrame.buildInstance().startChat(message.getReceiverName());
+                    addQueue(message.getReceiverId());
+                    MainFrame.getInstance().startChat(message.getReceiverName());
                 }
-                messages.get(message.getReceiverId()).put(message);
+                getQueue(message.getReceiverId()).put(message);
             } else {
                 if (!messages.containsKey(message.getSenderId())) {
-                    messages.put(message.getSenderId(), new SynchronousQueue<>());
-                    MainFrame.buildInstance().startChat(message.getSenderName());
+                    addQueue(message.getSenderId());
+                    MainFrame.getInstance().startChat(message.getSenderName());
                 }
-                messages.get(message.getSenderId()).put(message);
+                getQueue(message.getSenderId()).put(message);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public static void addQueue(String id) {
+        messages.put(id, new SynchronousQueue<>());
     }
 
     public static SynchronousQueue<Message> getQueue(String id) {

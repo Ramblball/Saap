@@ -1,14 +1,15 @@
-package http.payload;
+package http.dto;
 
-import http.PayLoad;
+import http.Dto;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.util.logging.Level;
-
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DatingUser implements PayLoad {
-    String city;
+public class CriteriaDto implements Dto {
+
+    String serviceToken;
+    String criteria;
+    String value;
 }

@@ -2,10 +2,8 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.payload.LoginReq;
+import http.dto.LoginDto;
 import view.Frame;
-import view.IFrame;
-import view.ViewLiterals;
 import view.main.MainFrame;
 
 import javax.swing.*;
@@ -14,24 +12,24 @@ import java.awt.*;
 /**
  * Класс окна входа
  */
-public class LoginFrame extends Frame implements IFrame {
+public class LoginFrame extends JFrame implements Frame {
 
     protected static final UserController auth = new UserController();
 
     protected Container container = getContentPane();
     // Лэйбл для поля ввода имени пользователя
-    private final JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
+    private final JLabel userLabel = new JLabel(AuthLiterals.USER_LABEL);
     // Лэйбл для поля ввода пароля
-    private final JLabel passwordLabel = new JLabel(ViewLiterals.PASSWORD_LABEL);
+    private final JLabel passwordLabel = new JLabel(AuthLiterals.PASSWORD_LABEL);
     // Поле для ввода имени пользователя
     protected JTextField userTextField = new JTextField();
     // Поле для ввода пароля
     protected JPasswordField passwordField = new JPasswordField();
     // Чекбокс для отображения и скрытия пароля
-    protected JCheckBox showPassword = new JCheckBox(ViewLiterals.SHOW_PASSWORD);
+    protected JCheckBox showPassword = new JCheckBox(AuthLiterals.SHOW_PASSWORD);
 
-    private final JButton loginButton = new JButton(ViewLiterals.LOGIN_BUTTON);
-    private final JButton registryButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
+    private final JButton loginButton = new JButton(AuthLiterals.LOGIN_BUTTON);
+    private final JButton registryButton = new JButton(AuthLiterals.SIGN_UP_BUTTON);
 
     @Override
     public void build() {
@@ -75,11 +73,11 @@ public class LoginFrame extends Frame implements IFrame {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
             if (userText.equals("") || passwordText.equals("")) {
-                JOptionPane.showMessageDialog(this, ViewLiterals.EMPTY_FIELDS_DIALOG);
+                JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
                     auth.authorize(
-                            LoginReq.builder()
+                            LoginDto.builder()
                                     .name(userText)
                                     .password(passwordText)
                                     .build()
@@ -108,7 +106,7 @@ public class LoginFrame extends Frame implements IFrame {
     }
 
     private void invokeMain() {
-        SwingUtilities.invokeLater(MainFrame::buildInstance);
+        SwingUtilities.invokeLater(MainFrame::getInstance);
         dispose();
     }
 }

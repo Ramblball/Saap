@@ -2,9 +2,10 @@ package service.weather.api;
 
 public interface WeatherParser {
     /**
-     * Интерфейс для получения готового прогноза погоды
-     * @param city
-     * @return Готовый прогноз погоды
+     * Получение готового прогноза погоды на 5 дней в заданном городе
+     *
+     * @param city Город для поиска
+     * @return Прогноз на 5 дней в заданном городе
      */
     String getReadyForecast(String city);
 }

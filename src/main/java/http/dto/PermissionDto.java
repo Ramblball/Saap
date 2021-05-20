@@ -1,12 +1,14 @@
-package http.payload;
+package http.dto;
 
-import http.PayLoad;
+import http.Dto;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class FieldReq implements PayLoad {
-    String value;
+public class PermissionDto implements Dto {
+
+    String serviceToken;
+    String permission;
 }

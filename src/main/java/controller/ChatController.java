@@ -29,8 +29,8 @@ public class ChatController {
             while (true) {
                 try {
                     Message message = queue.take();
-                    chatField.append(message.getSenderName() + ": " + message.getMessage());
-                    chatField.append("\n");
+                    chatField.append(
+                            String.format("%s: %s\n", message.getSenderName(), message.getMessage()));
                     log.info(message.toString());
                 } catch (InterruptedException e) {
                     log.error(e.getMessage(), e);

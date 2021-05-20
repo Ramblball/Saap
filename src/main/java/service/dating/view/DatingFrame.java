@@ -16,15 +16,12 @@ import javax.swing.*;
 public class DatingFrame extends JFrame implements Frame {
 
     public static final String BACK_TO_MAIN_MENU = "Назад";
-
     private static final String CHAT_DENIED_MESSAGE = "Пользователь запретил переписку с ним";
-
     private static final String NO_MORE_USERS = "В вашем городе больше нет пользователей";
-
-    private static User user;
 
     private static final DatingController datingController = new DatingController();
 
+    private static User user;
     @NonFinal private Iterator<User> users;
 
     JPanel informationPanel = new JPanel();
@@ -40,8 +37,7 @@ public class DatingFrame extends JFrame implements Frame {
         super("Dating app");
     }
 
-    @Override
-    public void setComponentsStyle() {
+    private void setComponentsStyle() {
         informationPanel.setBounds(50, 28, 304, 345);
         informationPanel.setBackground(new Color(196, 196, 196));
         likeButton.setText("LIKE"); //Предполагается убрать текст когда на кнопках будут картинки
@@ -56,8 +52,7 @@ public class DatingFrame extends JFrame implements Frame {
         userCityLabel.setBounds(80, 100, 100, 50);
     }
 
-    @Override
-    public void addComponentsToContainer() {
+    private void addComponentsToContainer() {
         this.getContentPane().setLayout(null);
         this.add(chatButton);
         this.add(skipButton);
@@ -69,21 +64,21 @@ public class DatingFrame extends JFrame implements Frame {
         informationPanel.add(userCityLabel);
     }
 
-    @Override
-    public void addListeners() {
+    private void addListeners() {
         backButton.addActionListener(e -> dispose());
         skipButton.addActionListener(e -> {
             if (users.hasNext()) {
                 user = users.next();
-                var userName = user.getName();
-                var userCity = user.getCity();
-                var userAge = user.getAge();
+                String userName = user.getName();
+                String userCity = user.getCity();
+                Integer userAge = user.getAge();
                 userNameLabel.setText("Имя: " + userName);
                 userCityLabel.setText("Город: " + userCity);
                 userAgeLabel.setText("Возраст: " + userAge);
             }
-            else
+            else {
                 JOptionPane.showMessageDialog(this, NO_MORE_USERS);
+            }
         });
         chatButton.addActionListener(e -> {
             if (user != null)

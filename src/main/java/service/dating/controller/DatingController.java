@@ -14,7 +14,7 @@ import java.util.Optional;
 @Slf4j
 public class DatingController {
 
-    private static final String TOKEN = "";
+    private static final String TOKEN = "60a5a1069d190428679fab38";
     private static final String NAME = "Dating";
 
     private JMXController jmxController;
