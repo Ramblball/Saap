@@ -1,4 +1,4 @@
-package service.weather.exception;
+package service.dating.exception;
 
 /**
  * Ошибка взаимодействия с основным приложением

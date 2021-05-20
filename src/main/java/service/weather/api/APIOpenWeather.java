@@ -1,10 +1,10 @@
 package service.weather.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import service.weather.exception.NotFoundException;
 import service.weather.exception.ParseException;
 
 import java.io.IOException;
@@ -19,16 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс для преобразования данных о погоде
+ */
 @Slf4j
 public class APIOpenWeather implements WeatherParser {
-    /**
-     * Константа форматирования даты в апи
-     */
+
+    // Константа форматирования даты в апи
     private final static DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    /**
-     * Константа форматирования даты для вывода пользователю
-     */
+
+    // Константа форматирования даты для вывода пользователю
     private final static DateTimeFormatter OUTPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("dd (MMMM) в HH:mm :");
 
@@ -37,27 +38,21 @@ public class APIOpenWeather implements WeatherParser {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    /**
-     * Получение готового прогноза погоды на 5 дней в заданном городе
-     *
-     * @param city
-     * @return Прогноз на 5 дней в заданном городе
-     */
     @Override
     public String getReadyForecast(String city) {
         try {
-            Optional<String> jsonRawData = downloadJsonRawData(city);
-            String result = String.format("%s:%s%s", city, System.lineSeparator(),
+            return String.format("%s:%s%s", city, System.lineSeparator(),
                     parseForecastDataFromList(
                             convertRawDataToList(
-                                    jsonRawData
-                                            .orElseThrow(ParseException::new))
+                                    downloadJsonRawData(city)
+                                            .orElseThrow(NotFoundException::new))
                                     .orElseThrow(ParseException::new))
                             .orElseThrow(ParseException::new));
-            return result;
+        } catch (NotFoundException e) {
+            log.error(e.getMessage(), e);
+            return "Не удалось найти указанный город";
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
-            e.printStackTrace();
             return "Услуга недоступна, пожалуйста, попробуйте позже";
         }
     }
@@ -65,22 +60,19 @@ public class APIOpenWeather implements WeatherParser {
     /**
      * Скачивание исходных данных в формате JSON
      *
-     * @param city
-     * @return Ответ с сайта openweathermap.org
+     * @param city Город для поиска
+     * @return Ответ сервера
      */
     private Optional<String> downloadJsonRawData(String city) {
         try {
             URI uriObject = URI.create(String.format(URL_STRING, city));
-
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
                     .uri(uriObject)
                     .timeout(Duration.ofMinutes(1))
                     .build();
-
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-
             if (response.statusCode() == 200) {
                 return Optional.of(response.body());
             }
@@ -93,14 +85,12 @@ public class APIOpenWeather implements WeatherParser {
     /**
      * Преобразование необработанных данных в список
      *
-     * @param data
+     * @param data данные для обработки
      * @return Список с данными о погоде
-     * @throws Exception
      */
     private Optional<List<String>> convertRawDataToList(String data) {
-        List<String> weatherList = new ArrayList<>();
-
         try {
+            List<String> weatherList = new ArrayList<>();
             JsonNode arrNode = new ObjectMapper().readTree(data).get("list");
             if (arrNode.isArray()) {
                 for (final JsonNode objNode : arrNode) {
@@ -121,27 +111,23 @@ public class APIOpenWeather implements WeatherParser {
     /**
      * Разбор данных о прогнозе погоды из списка с данными о погоде
      *
-     * @param weatherList
+     * @param weatherList Список с данными
      * @return Готовый текстовый формат выводимой информации
      */
     private Optional<String> parseForecastDataFromList(List<String> weatherList) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             for (String line : weatherList) {
-                String dateTime;
-                JsonNode mainNode;
-                JsonNode weatherArrNode;
-                mainNode = objectMapper.readTree(line).get("main");
-                weatherArrNode = objectMapper.readTree(line).get("weather");
+                JsonNode mainNode = objectMapper.readTree(line).get("main");
+                JsonNode weatherArrNode = objectMapper.readTree(line).get("weather");
                 for (final JsonNode objNode : weatherArrNode) {
-                    dateTime = objectMapper.readTree(line).get("dt_txt").toString();
-                    sb.append(formatForecastData(dateTime, objNode.get("main").toString(),
+                    String dateTime = objectMapper.readTree(line).get("dt_txt").toString();
+                    builder.append(formatForecastData(dateTime, objNode.get("main").toString(),
                             mainNode.get("temp").asDouble()));
                 }
             }
-            return Optional.of(sb.toString());
+            return Optional.of(builder.toString());
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Optional.empty();
@@ -151,9 +137,9 @@ public class APIOpenWeather implements WeatherParser {
     /**
      * Формат выводимой информации о погоде
      *
-     * @param dateTime
-     * @param description
-     * @param temperature
+     * @param dateTime    Время
+     * @param description Описание
+     * @param temperature Температура
      * @return Строчки с данными о дне, месяце, времени, температуры, состояния погоды
      */
     private static String formatForecastData(String dateTime, String description, double temperature) {

@@ -1,6 +1,6 @@
-package service.weather.controller;
+package service.dating.controller;
 
-import model.User;
+import service.dating.model.User;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface ServiceMBean {
 
     String getLocation(String serviceToken);
 
-    boolean openChat(String serviceToken, String receiverName);
+    boolean openChat(String serviceToken, String receiverId);
 
     List<User> getUsers(String serviceToken, String field, String value);
 

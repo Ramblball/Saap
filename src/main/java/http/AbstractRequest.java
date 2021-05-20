@@ -4,7 +4,7 @@ import static java.net.http.HttpRequest.Builder;
 import static java.net.http.HttpResponse.BodyHandlers;
 
 import com.google.gson.Gson;
-import http.payload.TokenRes;
+import http.dto.TokenDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -19,10 +19,12 @@ import java.util.Optional;
  * Класс для составления запроса к серверу
  */
 @Slf4j
-public abstract class HTTPRequest {
+public abstract class AbstractRequest {
 
+    // Заголовок указывающий тип данных в теле запроса
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
+    // Адрес сервера
     private static final String URI_LINK = "https://superappserver.herokuapp.com";
 
     protected final Gson gson = new Gson();
@@ -30,13 +32,13 @@ public abstract class HTTPRequest {
     private static String token;
 
     /**
-     * Метод составляющий запрос к серверу
+     * Метод для выполнения запроса к серверу
      *
      * @param request Данные для отправки
-     * @param path URI путь запроса
+     * @param path    URI путь запроса
      * @return Полученные данные
      */
-    public Optional<String> makeRequest(Builder request, String path) {
+    protected Optional<String> doRequest(Builder request, String path) {
         try {
             HttpResponse<String> response =
                     client.send(buildRequest(request, path), BodyHandlers.ofString());
@@ -50,6 +52,13 @@ public abstract class HTTPRequest {
         return Optional.empty();
     }
 
+    /**
+     * Метод для сбокри объекта запроса
+     *
+     * @param request Сборщик запроса
+     * @param path    url путь запроса
+     * @return Собранный запрос
+     */
     private HttpRequest buildRequest(Builder request, String path) {
         request = request
                 .uri(URI.create(URI_LINK + path))
@@ -61,7 +70,12 @@ public abstract class HTTPRequest {
         return request.build();
     }
 
-    public void setToken(TokenRes token) {
-        HTTPRequest.token = token.getPrefix() + token.getToken();
+    /**
+     * Метод для сохранения токена авторизации в классе
+     *
+     * @param token Токен авторизации
+     */
+    protected void setToken(TokenDto token) {
+        AbstractRequest.token = token.getPrefix() + token.getToken();
     }
 }

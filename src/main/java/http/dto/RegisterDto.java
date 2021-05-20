@@ -1,15 +1,18 @@
-package http.payload;
+package http.dto;
 
-import http.PayLoad;
+import http.Dto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * DTO класс для регистрации пользователя
+ */
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class RegisterReq implements PayLoad {
+public class RegisterDto implements Dto {
 
     String name;
     String password;

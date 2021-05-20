@@ -2,10 +2,8 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.payload.LoginReq;
+import http.dto.LoginDto;
 import view.Frame;
-import view.IFrame;
-import view.ViewLiterals;
 import view.main.MainFrame;
 
 import javax.swing.*;
@@ -14,24 +12,24 @@ import java.awt.*;
 /**
  * Класс окна входа
  */
-public class LoginFrame extends Frame implements IFrame {
+public class LoginFrame extends JFrame implements Frame {
 
     protected static final UserController auth = new UserController();
 
     protected Container container = getContentPane();
     // Лэйбл для поля ввода имени пользователя
-    private final JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
+    private final JLabel userLabel = new JLabel(AuthLiterals.USER_LABEL);
     // Лэйбл для поля ввода пароля
-    private final JLabel passwordLabel = new JLabel(ViewLiterals.PASSWORD_LABEL);
+    private final JLabel passwordLabel = new JLabel(AuthLiterals.PASSWORD_LABEL);
     // Поле для ввода имени пользователя
     protected JTextField userTextField = new JTextField();
     // Поле для ввода пароля
     protected JPasswordField passwordField = new JPasswordField();
     // Чекбокс для отображения и скрытия пароля
-    protected JCheckBox showPassword = new JCheckBox(ViewLiterals.SHOW_PASSWORD);
+    protected JCheckBox showPassword = new JCheckBox(AuthLiterals.SHOW_PASSWORD);
 
-    private final JButton loginButton = new JButton(ViewLiterals.LOGIN_BUTTON);
-    private final JButton registryButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
+    private final JButton loginButton = new JButton(AuthLiterals.LOGIN_BUTTON);
+    private final JButton registryButton = new JButton(AuthLiterals.SIGN_UP_BUTTON);
 
     @Override
     public void build() {
@@ -47,20 +45,24 @@ public class LoginFrame extends Frame implements IFrame {
         pack();
     }
 
-    protected void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 150, 100, 30);
-        passwordLabel.setBounds(50, 220, 100, 30);
         userTextField.setBounds(150, 150, 150, 30);
+        passwordLabel.setBounds(50, 220, 100, 30);
         passwordField.setBounds(150, 220, 150, 30);
         showPassword.setBounds(150, 250, 150, 30);
         loginButton.setBounds(150, 300, 150, 30);
         registryButton.setBounds(150, 350, 150, 30);
     }
 
-
-
-    protected void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         container.add(userLabel);
         container.add(passwordLabel);
         container.add(userTextField);
@@ -70,20 +72,18 @@ public class LoginFrame extends Frame implements IFrame {
         container.add(registryButton);
     }
 
-    protected void addListeners() {
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
         loginButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
             if (userText.equals("") || passwordText.equals("")) {
-                JOptionPane.showMessageDialog(this, ViewLiterals.EMPTY_FIELDS_DIALOG);
+                JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
-                    auth.authorize(
-                            LoginReq.builder()
-                                    .name(userText)
-                                    .password(passwordText)
-                                    .build()
-                    );
+                    auth.authorize(new LoginDto(userText, passwordText));
                 } catch (AuthException exception) {
                     JOptionPane.showMessageDialog(this, exception.getMessage());
                 }
@@ -94,10 +94,12 @@ public class LoginFrame extends Frame implements IFrame {
                 }
             }
         });
+        // Переход к окну регистрации
         registryButton.addActionListener(e -> {
             setVisible(false);
             new RegistrationFrame().build();
         });
+        // Инверсия отображения пароля
         showPassword.addActionListener(e -> {
             if (showPassword.isSelected()) {
                 passwordField.setEchoChar((char) 0);
@@ -107,8 +109,11 @@ public class LoginFrame extends Frame implements IFrame {
         });
     }
 
+    /**
+     * Метод для открытия главного окна приложения
+     */
     private void invokeMain() {
-        SwingUtilities.invokeLater(MainFrame::buildInstance);
+        SwingUtilities.invokeLater(MainFrame::getInstance);
         dispose();
     }
 }

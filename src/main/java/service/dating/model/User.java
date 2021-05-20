@@ -1,14 +1,18 @@
-package http.payload;
+package service.dating.model;
 
-import http.PayLoad;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.util.logging.Level;
-
+/**
+ * Класс модели данных пользователя
+ */
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DatingUser implements PayLoad {
+public class User {
+
+    String id;
+    String name;
+    Integer age;
     String city;
 }

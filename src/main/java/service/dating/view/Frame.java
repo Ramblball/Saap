@@ -1,7 +1,7 @@
-package view;
+package service.dating.view;
 
 /**
- * Интерфейс работы с окном
+ * Интерфейс, описывающий работу с окном
  */
 public interface Frame {
 

@@ -1,30 +1,35 @@
 package http.request;
 
-import http.HTTPRequest;
+import http.AbstractRequest;
 import http.Request;
-import http.PayLoad;
-import http.payload.TokenRes;
+import http.Dto;
+import http.dto.TokenDto;
 import lombok.extern.slf4j.Slf4j;
+
 
 import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpRequest;
 import java.util.Optional;
 
+/**
+ * Класс запроса на авторизацию пользователя
+ */
 @Slf4j
-public class PostRegisterRequest extends HTTPRequest implements Request {
-    private static final String PATH = "/auth/registration";
+public class PostLogin extends AbstractRequest implements Request {
+
+    private static final String PATH = "/auth/login";
 
     @Override
-    public Optional<String> send(PayLoad object) {
+    public Optional<String> send(Dto object) {
         String data = gson.toJson(object);
         Builder request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(data));
         log.info(PATH + " -> POST -> " + data);
-        Optional<String> response = makeRequest(request, PATH);
+        Optional<String> response = doRequest(request, PATH);
         if (response.isEmpty()) {
             return Optional.empty();
         }
-        TokenRes token = gson.fromJson(response.get(), TokenRes.class);
+        TokenDto token = gson.fromJson(response.get(), TokenDto.class);
         setToken(token);
         return Optional.of("");
     }

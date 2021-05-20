@@ -2,26 +2,29 @@ package view.main;
 
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.payload.FieldReq;
+import http.dto.ParamDto;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.Frame;
-import view.IFrame;
 import view.chat.ChatFrame;
-import service.weather.MainWeather;
-import view.service.DatingService.DatingMain;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * Класс основного окна приложения.
+ * Реализует шаблон singleton
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MainFrame extends Frame implements IFrame {
+public class MainFrame extends JFrame {
 
+    // Путь до компилятора java в системе
     private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
+    // Путь до скомпилированного сервиса
     private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
 
     private static final UserController userController = new UserController();
@@ -29,18 +32,21 @@ public class MainFrame extends Frame implements IFrame {
     private static MainFrame instance;
 
     Box verticalBox = Box.createVerticalBox();
-
-
     JButton addChatButton = new JButton();
     JButton serviceButton = new JButton();
-
+    // Мапинг пользователя в окно чата с ним
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
     private MainFrame() {
         super("SApp");
     }
 
-    public static MainFrame buildInstance() {
+    /**
+     * Метод для получения экземпляра главного окна
+     *
+     * @return Экземпляр главного окна
+     */
+    public static MainFrame getInstance() {
         if (instance == null) {
             instance = new MainFrame();
             instance.build();
@@ -48,8 +54,7 @@ public class MainFrame extends Frame implements IFrame {
         return instance;
     }
 
-    @Override
-    public void build() {
+    private void build() {
         setComponentsStyle();
         addComponentsToContainer();
         addListeners();
@@ -61,19 +66,29 @@ public class MainFrame extends Frame implements IFrame {
         pack();
     }
 
-    protected void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
         serviceButton.setPreferredSize(new Dimension(100, 50));
         serviceButton.setText("Test");
         addChatButton.setText("PLUS");
     }
 
-    protected void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         add(verticalBox, BorderLayout.WEST);
         verticalBox.add(serviceButton);
         verticalBox.add(addChatButton);
     }
 
-    protected void addListeners() {
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
+        // Открытие окна сервиса
         serviceButton.addActionListener(e -> {
             try {
                 ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
@@ -83,6 +98,7 @@ public class MainFrame extends Frame implements IFrame {
                 log.error(ex.getMessage(), ex);
             }
         });
+        // Создание новго чата
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
                     "Введите имя пользователя");
@@ -92,9 +108,14 @@ public class MainFrame extends Frame implements IFrame {
         });
     }
 
+    /**
+     * Метод для открытия окна чата
+     *
+     * @param name Имя собеседника
+     */
     public void startChat(String name) {
         try {
-            FieldReq userField = new FieldReq(name);
+            ParamDto userField = new ParamDto(name);
             User friendUser = userController.getFriendInfo(userField);
             if (chatFrames.containsKey(friendUser.getId())) {
                 openChat(friendUser.getId());
@@ -106,6 +127,11 @@ public class MainFrame extends Frame implements IFrame {
         }
     }
 
+    /**
+     * Метод для создания нового окна чата
+     *
+     * @param friend Пользователь-собеседник
+     */
     private void startNewChat(User friend) {
         hideAllChats();
         ChatFrame chat = new ChatFrame(friend);
@@ -118,6 +144,11 @@ public class MainFrame extends Frame implements IFrame {
         chat.build();
     }
 
+    /**
+     * Метод для открытия уже существующего окна чата
+     *
+     * @param friendId Уникальный идентификатор пользователя-собеседника
+     */
     private void openChat(String friendId) {
         hideAllChats();
         ChatFrame frame = chatFrames.get(friendId);
@@ -125,6 +156,9 @@ public class MainFrame extends Frame implements IFrame {
         frame.setVisible(true);
     }
 
+    /**
+     * Метод для скрытия всех окон чатов
+     */
     private void hideAllChats() {
         chatFrames.values().forEach(f -> f.setVisible(false));
     }

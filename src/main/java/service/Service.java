@@ -4,13 +4,16 @@ import chat.StompHandler;
 import controller.ServiceController;
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.payload.FieldReq;
+import http.dto.ParamDto;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.main.MainFrame;
 
 import java.util.List;
 
+/**
+ * Класс реализации интерфейса взаимодействия с сервисами
+ */
 @Slf4j
 public class Service implements ServiceMBean {
 
@@ -37,9 +40,9 @@ public class Service implements ServiceMBean {
     public boolean openChat(String serviceToken, String receiverName) {
         if (serviceController.hasPermission(serviceToken, CHAT_PERMISSION)) {
             try {
-                User friend = userController.getFriendInfo(new FieldReq(receiverName));
+                User friend = userController.getFriendInfo(new ParamDto(receiverName));
                 StompHandler.getQueue(friend.getId());
-                MainFrame.buildInstance().startChat(friend.getName());
+                MainFrame.getInstance().startChat(friend.getName());
                 return true;
             } catch (NotFoundException ex) {
                 log.error(ex.getMessage(), ex);

@@ -1,17 +1,20 @@
 package service;
 
-import java.util.HashMap;
-import java.util.Map;
+/**
+ * Перечисление прав, доступных сервисам
+ */
+public enum Permission {
 
-public class Permission {
+    LOCATION("%s запрашивает доступ к вашему местоположению"),
+    CHAT("%s запрашивает доступ к возможности создать переписку");
 
-    private static final Map<String, String> permissions = new HashMap<>();
+    String message;
 
-    static {
-        permissions.put("LOCATION", "%s запрашивает доступ к вашему местоположению");
+    Permission(String message) {
+        this.message = message;
     }
 
-    public static Map<String, String> getPermissions() {
-        return permissions;
+    public String getMessage() {
+        return message;
     }
 }

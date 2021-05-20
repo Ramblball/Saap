@@ -2,10 +2,8 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.payload.RegisterReq;
+import http.dto.RegisterDto;
 import view.Frame;
-import view.IFrame;
-import view.ViewLiterals;
 import view.main.MainFrame;
 
 import javax.swing.*;
@@ -14,11 +12,12 @@ import java.awt.*;
 /**
  * Класс окна регистрации
  */
-public class RegistrationFrame extends Frame implements IFrame {
+public class RegistrationFrame extends JFrame implements Frame {
 
     protected static final UserController auth = new UserController();
     // Диапазон допустимых возрастов
     private static final Integer[] ages = new Integer[88];
+
     static {
         for (int i = 12; i < 100; i++) {
             ages[i - 12] = i;
@@ -27,25 +26,25 @@ public class RegistrationFrame extends Frame implements IFrame {
 
     private final Container container = getContentPane();
     // Лэйбл для поля ввода имени пользователя
-    private final JLabel userLabel = new JLabel(ViewLiterals.USER_LABEL);
+    private final JLabel userLabel = new JLabel(AuthLiterals.USER_LABEL);
     // Лэйбл для поля ввода имени пользователя
-    private final JLabel cityLabel = new JLabel(ViewLiterals.CITY_LABEL);
+    private final JLabel cityLabel = new JLabel(AuthLiterals.CITY_LABEL);
     // Поле для ввода имени пользователя
     protected JTextField cityTextField = new JTextField();
     // Лэйбл для поля ввода возраста
-    private final JLabel ageLabel = new JLabel(ViewLiterals.AGE_LABEL);
+    private final JLabel ageLabel = new JLabel(AuthLiterals.AGE_LABEL);
     // Выпадающий список для ввода возраста
     private final JComboBox<Integer> ageBox = new JComboBox<>(ages);
     // Кнопка рагистрации
-    private final JButton signupButton = new JButton(ViewLiterals.SIGN_UP_BUTTON);
+    private final JButton signupButton = new JButton(AuthLiterals.SIGN_UP_BUTTON);
     // Лэйбл для поля ввода пароля
-    private final JLabel passwordLabel = new JLabel(ViewLiterals.PASSWORD_LABEL);
+    private final JLabel passwordLabel = new JLabel(AuthLiterals.PASSWORD_LABEL);
     // Поле для ввода имени пользователя
     protected JTextField userTextField = new JTextField();
     // Поле для ввода пароля
     protected JPasswordField passwordField = new JPasswordField();
     // Чекбокс для отображения и скрытия пароля
-    protected JCheckBox showPassword = new JCheckBox(ViewLiterals.SHOW_PASSWORD);
+    protected JCheckBox showPassword = new JCheckBox(AuthLiterals.SHOW_PASSWORD);
 
     private Integer age = 12;
 
@@ -63,7 +62,10 @@ public class RegistrationFrame extends Frame implements IFrame {
         pack();
     }
 
-    protected void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
         container.setLayout(null);
         userLabel.setBounds(50, 115, 100, 30);
         userTextField.setBounds(150, 115, 150, 30);
@@ -77,7 +79,10 @@ public class RegistrationFrame extends Frame implements IFrame {
         signupButton.setBounds(150, 300, 150, 30);
     }
 
-    protected void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         container.add(userLabel);
         container.add(userTextField);
         container.add(cityLabel);
@@ -90,18 +95,23 @@ public class RegistrationFrame extends Frame implements IFrame {
         container.add(signupButton);
     }
 
-    protected void addListeners() {
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
+        // Получение возраста из поля
         ageBox.addActionListener(e -> age = (Integer) ageBox.getSelectedItem());
+        // Регистрация пользовтаеля
         signupButton.addActionListener(e -> {
             String userText = userTextField.getText();
             String cityText = cityTextField.getText();
             String passwordText = String.valueOf(passwordField.getPassword());
             if (userText.equals("") || cityText.equals("") || passwordText.equals("") || age == null) {
-                JOptionPane.showMessageDialog(this, ViewLiterals.EMPTY_FIELDS_DIALOG);
+                JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
                     auth.register(
-                            RegisterReq.builder()
+                            RegisterDto.builder()
                                     .name(userText)
                                     .password(passwordText)
                                     .city(cityText)
@@ -117,6 +127,7 @@ public class RegistrationFrame extends Frame implements IFrame {
                 }
             }
         });
+        // Инверсия отображения пароля
         showPassword.addActionListener(e -> {
             if (showPassword.isSelected()) {
                 passwordField.setEchoChar((char) 0);
@@ -127,7 +138,7 @@ public class RegistrationFrame extends Frame implements IFrame {
     }
 
     private void invokeMain() {
-        SwingUtilities.invokeLater(MainFrame::buildInstance);
+        SwingUtilities.invokeLater(MainFrame::getInstance);
         dispose();
     }
 }
