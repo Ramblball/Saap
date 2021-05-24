@@ -13,11 +13,15 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Класс клиента для WebSocket
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StompClient {
-
+    // Url адрес сервера
     private static final String URL = "ws://superappserver.herokuapp.com/ws";
+    // Url путь для отправки сообщений
     private static final String SEND_PATH = "/app/chat";
 
     private static StompClient instance;
@@ -25,7 +29,8 @@ public class StompClient {
     WebSocketClient client = new StandardWebSocketClient();
     WebSocketStompClient stompClient = new WebSocketStompClient(client);
     StompSessionHandler sessionHandler = new StompHandler();
-    @NonFinal StompSession session;
+    @NonFinal
+    StompSession session;
 
     private StompClient() {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -39,7 +44,10 @@ public class StompClient {
         return instance;
     }
 
-    public void connect() {
+    /**
+     * Метод для подключения к WS серверу
+     */
+    private void connect() {
         try {
             session = stompClient
                     .connect(URL, sessionHandler)
@@ -49,6 +57,11 @@ public class StompClient {
         }
     }
 
+    /**
+     * Метод для отправки сообщения
+     *
+     * @param message Сообщение
+     */
     public void send(Message message) {
         if (!session.isConnected()) {
             connect();

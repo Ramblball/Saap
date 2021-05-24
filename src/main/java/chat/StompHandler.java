@@ -13,9 +13,13 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.concurrent.SynchronousQueue;
 
+/**
+ * Класс обработчик кадров WebSocket
+ */
 @Slf4j
 public class StompHandler extends StompSessionHandlerAdapter {
 
+    // Url путь для получения сообщений
     private static final String MESSAGE_PATH = "/user/%s/queue/messages";
 
     private static final HashMap<String, SynchronousQueue<Message>> messages = new HashMap<>();
@@ -27,8 +31,7 @@ public class StompHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        Message message = (Message) payload;
-        addMessage(message);
+        addMessage((Message) payload);
     }
 
     @Override
@@ -51,24 +54,33 @@ public class StompHandler extends StompSessionHandlerAdapter {
         log.error(exception.getMessage(), exception);
     }
 
+    /**
+     * Метод для распределения сообщений по пользователям
+     *
+     * @param message Сообщение
+     */
     private void addMessage(Message message) {
         try {
             if (message.getSenderName().equals(UserController.getUser().getName())) {
                 if (!messages.containsKey(message.getReceiverId())) {
-                    messages.put(message.getReceiverId(), new SynchronousQueue<>());
-                    MainFrame.buildInstance().startChat(message.getReceiverName());
+                    addQueue(message.getReceiverId());
+                    MainFrame.getInstance().startChat(message.getReceiverName());
                 }
-                messages.get(message.getReceiverId()).put(message);
+                getQueue(message.getReceiverId()).put(message);
             } else {
                 if (!messages.containsKey(message.getSenderId())) {
-                    messages.put(message.getSenderId(), new SynchronousQueue<>());
-                    MainFrame.buildInstance().startChat(message.getSenderName());
+                    addQueue(message.getSenderId());
+                    MainFrame.getInstance().startChat(message.getSenderName());
                 }
-                messages.get(message.getSenderId()).put(message);
+                getQueue(message.getSenderId()).put(message);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public static void addQueue(String id) {
+        messages.put(id, new SynchronousQueue<>());
     }
 
     public static SynchronousQueue<Message> getQueue(String id) {

@@ -9,6 +9,9 @@ import service.weather.controller.WeatherController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Класс главного окна погоды
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WeatherFrame extends JFrame implements Frame {
@@ -16,42 +19,43 @@ public class WeatherFrame extends JFrame implements Frame {
     private static final WeatherController weatherController = new WeatherController();
 
     Container container = getContentPane();
-
     JTextField cityField = new JTextField();
-
     JLabel cityLabel = new JLabel(WeatherLiterals.CITY_LABEL);
-
     JButton weatherFindButton = new JButton(WeatherLiterals.WEATHER_BUTTON);
-
     JTextArea weatherTextArea = new JTextArea();
 
-
-    @Override
-    public void setComponentsStyle() {
+    /**
+     * Метод для настройки стилей
+     */
+    private void setComponentsStyle() {
+        container.setLayout(null);
         cityField.setBounds(100, 10, 150, 30);
         cityLabel.setBounds(50, 10, 100, 30);
         weatherFindButton.setBounds(100, 40, 150, 30);
-        container.setLayout(null);
         weatherTextArea.setBounds(300, 10, 300, 400);
         weatherTextArea.setEditable(false);
     }
 
-    @Override
-    public void addComponentsToContainer() {
+    /**
+     * Метод для добавления компонентов
+     */
+    private void addComponentsToContainer() {
         container.add(cityLabel);
         container.add(cityField);
-        container.add(weatherFindButton);
         container.add(weatherTextArea);
+        container.add(weatherFindButton);
     }
 
-    @Override
-    public void addListeners() {
-        weatherFindButton.addActionListener(e ->{
+    /**
+     * Метод для добавления обработчиков
+     */
+    private void addListeners() {
+        // запрос погоды в введенном городе
+        weatherFindButton.addActionListener(e -> {
             String cityText = cityField.getText();
-            System.out.println(cityText);
             if (cityText.trim().equals("")) {
                 JOptionPane.showMessageDialog(this, WeatherLiterals.EMPTY_FIELDS_DIALOG);
-            }else{
+            } else {
                 weatherTextArea.setText(weatherController.getWeather(cityText));
             }
         });

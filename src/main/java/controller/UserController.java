@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import controller.exceptions.AuthException;
 import controller.exceptions.NotFoundException;
 import http.Request;
-import http.payload.FieldReq;
-import http.payload.LoginReq;
-import http.payload.RegisterReq;
-import http.request.PostLoginRequest;
-import http.request.PostRegisterRequest;
-import http.request.GetUserRequest;
-import http.request.GetFriendInfoRequest;
+import http.dto.ParamDto;
+import http.dto.LoginDto;
+import http.dto.RegisterDto;
+import http.request.GetFriend;
+import http.request.GetUser;
+import http.request.PostLogin;
+import http.request.PostRegister;
 import model.User;
 
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class UserController {
     private static final String GET_USER_EXCEPTION = "Невозможно загрузить данные пользователя";
     private static final String GET_FRIEND_EXCEPTION = "Пользователь с таким именем не найден";
     private static final Gson gson = new Gson();
-
+    // Объект пользователя
     private static User user;
 
     public static User getUser() {
@@ -34,11 +34,12 @@ public class UserController {
 
     /**
      * Метод для авторизации пользователя
-     * @param login             Данные для входа в систему
-     * @throws AuthException    Ошибка при попытке авторизироваться
+     *
+     * @param login Данные для входа в систему
+     * @throws AuthException Ошибка при попытке авторизироваться
      */
-    public void authorize(LoginReq login) throws AuthException {
-        Request request = new PostLoginRequest();
+    public void authorize(LoginDto login) throws AuthException {
+        Request request = new PostLogin();
         Optional<String> response = request.send(login);
         response.orElseThrow(() -> new AuthException(AUTHORIZE_EXCEPTION));
         setUserInfo();
@@ -46,11 +47,12 @@ public class UserController {
 
     /**
      * Метод для регистрации пользователя
-     * @param register          Данные для регистрации
-     * @throws AuthException    Ошибка при попытке регисрации
+     *
+     * @param register Данные для регистрации
+     * @throws AuthException Ошибка при попытке регисрации
      */
-    public void register(RegisterReq register) throws AuthException {
-        Request request = new PostRegisterRequest();
+    public void register(RegisterDto register) throws AuthException {
+        Request request = new PostRegister();
         Optional<String> response = request.send(register);
         response.orElseThrow(() -> new AuthException(REGISTRATION_EXCEPTION));
         setUserInfo();
@@ -58,23 +60,27 @@ public class UserController {
 
     /**
      * Метод для получения данных о пользователе
-     * @throws AuthException    Ошибка при загрузке данных
+     *
+     * @throws AuthException Ошибка при загрузке данных
      */
     private void setUserInfo() throws AuthException {
-        Request request = new GetUserRequest();
+        Request request = new GetUser();
         Optional<String> response = request.send(null);
-        if (response.isEmpty()) {
-            throw new AuthException(GET_USER_EXCEPTION);
-        }
-        user = gson.fromJson(response.get(), User.class);
+        user = gson.fromJson(response
+                .orElseThrow(() -> new AuthException(GET_USER_EXCEPTION)), User.class);
     }
 
-    public User getFriendInfo(FieldReq friend) throws NotFoundException {
-        Request request = new GetFriendInfoRequest();
+    /**
+     * Метод для получения данных о собеседнике
+     *
+     * @param friend DTO объект с именем собеседника
+     * @return Объект пользователя-собеседника
+     * @throws NotFoundException Не удалось найти пользователя
+     */
+    public User getFriendInfo(ParamDto friend) throws NotFoundException {
+        Request request = new GetFriend();
         Optional<String> response = request.send(friend);
-        if (response.isEmpty()) {
-            throw new NotFoundException(GET_FRIEND_EXCEPTION);
-        }
-        return gson.fromJson(response.get(), User.class);
+        return gson.fromJson(response
+                .orElseThrow(() -> new NotFoundException(GET_FRIEND_EXCEPTION)), User.class);
     }
 }

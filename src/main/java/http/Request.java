@@ -13,5 +13,5 @@ public interface Request {
      * @param object Данные для отправки
      * @return Полученные данные
      */
-    Optional<String> send(PayLoad object);
+    Optional<String> send(Dto object);
 }
