@@ -22,11 +22,6 @@ import java.util.HashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame {
 
-    // Путь до компилятора java в системе
-    private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
-    // Путь до скомпилированного сервиса
-    private static final String SERVICE_PATH = "/home/ramblball/Projects/Java/Saap/out/artifacts/test/Saap.jar";
-
     private static final UserController userController = new UserController();
 
     private static MainFrame instance;
@@ -89,15 +84,7 @@ public class MainFrame extends JFrame {
      */
     private void addListeners() {
         // Открытие окна сервиса
-        serviceButton.addActionListener(e -> {
-            try {
-                ProcessBuilder pb = new ProcessBuilder(JAVA_HOME, "-jar", SERVICE_PATH);
-                Process p = pb.inheritIO().start();
-                System.out.println(p.waitFor());
-            } catch (IOException | InterruptedException ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        });
+        serviceButton.addActionListener(e -> Frame frame = new ServiceFrame());
         // Создание новго чата
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
