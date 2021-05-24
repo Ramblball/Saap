@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * Класс окна отображения сервисов
+ */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceFrame extends Frame implements IFrame {
@@ -22,13 +25,12 @@ public class ServiceFrame extends Frame implements IFrame {
     @Override
     protected void setComponentsStyle() {
         container.setLayout(null);
-        File[] listOfFiles = getServices();
-        JButton[] btn = new JButton[listOfFiles.length];
-        for (int i = 0; i < listOfFiles.length; ++i) {
-            btn[i] = new JButton(listOfFiles[i].getName());
-            btn[i].setBounds(10, i*50, 100, 30);
-            addListener(btn[i], listOfFiles[i]);
-            container.add(btn[i]);
+        File[] services = getServices();
+        for (int i = 0; i < services.length; i++) {
+            JButton btn = new JButton(services[i].getName());
+            btn.setBounds(10, i*50, 100, 30);
+            addListener(btn, services[i]);
+            container.add(btn);
         }
     }
 
@@ -51,12 +53,17 @@ public class ServiceFrame extends Frame implements IFrame {
         pack();
     }
 
+    /**
+     * Метод для получения массива сервисов из resources
+     * @return Массив сервисов
+     */
     private File[] getServices() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("services");
         if (url == null) {
             log.error("something going wrong");
             dispose();
+            return new File[0];
         }
         String path = url.getPath();
         return new File(path).listFiles();
