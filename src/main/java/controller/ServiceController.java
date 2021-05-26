@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import service.Permission;
-import view.main.MainFrame;
+import com.google.gson.reflect.TypeToken;
 
 import javax.swing.*;
 import java.util.*;
@@ -64,7 +64,7 @@ public class ServiceController {
      */
     public boolean addPermission(String serviceToken, String serviceName, String permission) {
         try {
-            if (askPermission(serviceName, permission) == 0) {
+            if (askPermission(serviceName, permission) != 0) {
                 return false;
             }
             Dto dto = new ServiceParamDto(serviceToken, permission);
@@ -85,19 +85,16 @@ public class ServiceController {
      * @param value        Значение поля
      * @return Список пользователей
      */
-    public List<User> getUsers(String serviceToken, String field, String value) {
+    public String getUsers(String serviceToken, String field, String value) {
         try {
             Dto dto = new CriteriaDto(serviceToken, field, value);
             Request request = new GetServiceUsers();
             Optional<String> response = request.send(dto);
-            return gson.fromJson(
-                    response.orElseThrow(() -> new ServiceException(GET_USERS_EXCEPTION)),
-                    List.class
-            );
+            return response.orElseThrow(() -> new ServiceException(GET_USERS_EXCEPTION));
         } catch (ServiceException | ClassCastException ex) {
             log.error(ex.getMessage(), ex);
         }
-        return new ArrayList<>();
+        return "";
     }
 
     /**
@@ -114,7 +111,8 @@ public class ServiceController {
         Optional<String> response = request.send(dto);
         return gson.fromJson(
                 response.orElseThrow(() -> new ServiceException(GET_PERMISSIONS_EXCEPTION)),
-                HashSet.class);
+                new TypeToken<HashSet<String>>(){}.getType()
+        );
     }
 
     /**
@@ -126,7 +124,7 @@ public class ServiceController {
      */
     private int askPermission(String serviceName, String permission) throws IllegalArgumentException {
         return JOptionPane.showConfirmDialog(
-                MainFrame.getInstance(),
+                null,
                 String.format(Permission.valueOf(permission).getMessage(), serviceName),
                 CONFIRM_TITLE,
                 JOptionPane.YES_NO_OPTION,

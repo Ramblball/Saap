@@ -2,6 +2,7 @@ package http.request;
 
 import http.AbstractRequest;
 import http.Dto;
+import http.HttpLiterals;
 import http.Request;
 import http.dto.ParamDto;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,11 @@ import java.util.Optional;
 public class GetPermissions extends AbstractRequest implements Request {
 
     private static final String PATH = "/service/permissions";
-    private static final String SERVICE_HEADER = "service";
 
     @Override
     public Optional<String> send(Dto object) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
-                .header(SERVICE_HEADER, ((ParamDto) object).getValue())
+                .header(HttpLiterals.SERVICE_HEADER, ((ParamDto) object).getValue())
                 .GET();
         log.info(PATH + " -> GET");
         return doRequest(request, PATH);

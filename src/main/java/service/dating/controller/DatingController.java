@@ -1,5 +1,7 @@
 package service.dating.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import service.dating.exception.JMXException;
 import service.dating.model.Permission;
@@ -20,6 +22,7 @@ public class DatingController {
     private static final String TOKEN = "60a5a1069d190428679fab38";
     private static final String NAME = "Dating";
 
+    private static final Gson gson = new Gson();
     private JMXController jmxController;
 
     public DatingController() {
@@ -39,9 +42,10 @@ public class DatingController {
     public List<User> getUsers() {
         try {
             if (hasPermission(Permission.LOCATION) || askPermission(Permission.LOCATION)) {
-                return jmxController
+                return gson.fromJson(jmxController
                         .getBean()
-                        .getUsers(TOKEN, "city", getLocation().orElseThrow(JMXException::new));
+                        .getUsers(TOKEN, "city", getLocation().orElseThrow(JMXException::new)),
+                        new TypeToken<ArrayList<User>>(){}.getType());
             }
         } catch (JMXException e) {
             log.error(e.getMessage(), e);

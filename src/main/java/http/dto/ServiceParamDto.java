@@ -1,5 +1,6 @@
 package http.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import http.Dto;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -12,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceParamDto implements Dto {
 
+    @JsonIgnore
     String serviceToken;
     String value;
 }

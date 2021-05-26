@@ -17,14 +17,14 @@ import java.util.Optional;
 @Slf4j
 public class PutAddPermission extends AbstractRequest implements Request {
 
-    private static final String PATH = "/permissions/add/%s";
+    private static final String PATH = "/service/permissions/add/%s";
 
     @Override
     public Optional<String> send(Dto object) {
         ServiceParamDto payload = (ServiceParamDto) object;
         Builder request = HttpRequest.newBuilder()
                 .header(HttpLiterals.SERVICE_HEADER, payload.getServiceToken())
-                .PUT(HttpRequest.BodyPublishers.ofString(""));
+                .PUT(HttpRequest.BodyPublishers.ofString("{}"));
         String uri = String.format(PATH, payload.getValue());
         log.info(uri + " -> PUT -> " + payload);
         return doRequest(request, uri);

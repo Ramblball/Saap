@@ -9,9 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.chat.ChatFrame;
 
+import view.Frame;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 /**
@@ -21,6 +24,8 @@ import java.util.HashMap;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame {
+
+    private static final String EXIT_MSG = "Выйти и зайти нормально?";
 
     private static final UserController userController = new UserController();
 
@@ -54,7 +59,7 @@ public class MainFrame extends JFrame {
         addComponentsToContainer();
         addListeners();
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setPreferredSize(new Dimension(800, 500));
         setResizable(false);
         setVisible(true);
@@ -66,8 +71,8 @@ public class MainFrame extends JFrame {
      */
     private void setComponentsStyle() {
         serviceButton.setPreferredSize(new Dimension(100, 50));
-        serviceButton.setText("Test");
-        addChatButton.setText("PLUS");
+        serviceButton.setText("Сервисы");
+        addChatButton.setText("Найти чат");
     }
 
     /**
@@ -84,7 +89,10 @@ public class MainFrame extends JFrame {
      */
     private void addListeners() {
         // Открытие окна сервиса
-        serviceButton.addActionListener(e -> Frame frame = new ServiceFrame());
+        serviceButton.addActionListener(e -> {
+            Frame frame = new ServiceFrame();
+            SwingUtilities.invokeLater(frame::build);
+        });
         // Создание новго чата
         addChatButton.addActionListener(e -> {
             Object result = JOptionPane.showInputDialog(this,
@@ -93,7 +101,22 @@ public class MainFrame extends JFrame {
                 startChat(result.toString().trim());
             }
         });
+        // Обработчик закрытия прложения
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+
+                if (JOptionPane.showConfirmDialog(null,
+                        EXIT_MSG,
+                        "",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE) == 0) {
+                    ServiceFrame.stopServices();
+                    System.exit(0);
+                }
+            }
+        });
     }
+
 
     /**
      * Метод для открытия окна чата

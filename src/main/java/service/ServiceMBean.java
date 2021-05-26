@@ -35,7 +35,7 @@ public interface ServiceMBean {
      * @param value        Значение поля
      * @return Список пользоваателей
      */
-    List<User> getUsers(String serviceToken, String field, String value);
+    String getUsers(String serviceToken, String field, String value);
 
     /**
      * Метод для проверки на наличие прав

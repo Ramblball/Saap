@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import view.main.MainFrame;
 
-import java.util.List;
-
 /**
  * Класс реализации интерфейса взаимодействия с сервисами
  */
@@ -52,7 +50,7 @@ public class Service implements ServiceMBean {
     }
 
     @Override
-    public List<User> getUsers(String serviceToken, String field, String value) {
+    public String getUsers(String serviceToken, String field, String value) {
         return serviceController.getUsers(serviceToken, field, value);
     }
 
