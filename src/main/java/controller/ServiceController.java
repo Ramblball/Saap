@@ -1,6 +1,7 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import controller.exceptions.ServiceException;
 import http.Dto;
 import http.Request;
@@ -13,12 +14,12 @@ import http.request.PutAddPermission;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
 import service.Permission;
-import com.google.gson.reflect.TypeToken;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Класс контроллер для работы с сервисами
@@ -45,7 +46,7 @@ public class ServiceController {
      */
     public boolean hasPermission(String serviceToken, String permission) {
         try {
-            Set<String> permissions = getUserPermissions(serviceToken);
+            Set<String> permissions = getUserPermissions(new GetPermissions(), new ParamDto(serviceToken));
             return permissions.contains(permission);
         } catch (ServiceException | ClassCastException ex) {
             log.error(ex.getMessage(), ex);
@@ -56,19 +57,15 @@ public class ServiceController {
     /**
      * Метод для добавления права
      *
-     * @param serviceToken Уникальный идентификатор сервиса
      * @param serviceName  Название сервиса
-     * @param permission   Право
      * @return true - Разрешено;
      * false - Отказано;
      */
-    public boolean addPermission(String serviceToken, String serviceName, String permission) {
+    public boolean addPermission(Request request, ServiceParamDto dto, String serviceName) {
         try {
-            if (askPermission(serviceName, permission) != 0) {
+            if (askPermission(serviceName, dto.getValue()) != 0) {
                 return false;
             }
-            Dto dto = new ServiceParamDto(serviceToken, permission);
-            Request request = new PutAddPermission();
             request.send(dto).orElseThrow(() -> new ServiceException(ADD_PERMISSIONS_EXCEPTION));
             return true;
         } catch (ServiceException | IllegalArgumentException ex) {
@@ -80,15 +77,10 @@ public class ServiceController {
     /**
      * Метод для получения списка пользователей сервиса с параметром
      *
-     * @param serviceToken Уникальный идентификатор сервиса
-     * @param field        Поле ограничения
-     * @param value        Значение поля
      * @return Список пользователей
      */
-    public String getUsers(String serviceToken, String field, String value) {
+    public String getUsers(Request request, Dto dto) {
         try {
-            Dto dto = new CriteriaDto(serviceToken, field, value);
-            Request request = new GetServiceUsers();
             Optional<String> response = request.send(dto);
             return response.orElseThrow(() -> new ServiceException(GET_USERS_EXCEPTION));
         } catch (ServiceException | ClassCastException ex) {
@@ -100,14 +92,11 @@ public class ServiceController {
     /**
      * Метод для получения множества прав сервиса для пользователя
      *
-     * @param serviceToken Уникальный идентификатор сервиса
      * @return Множество прав
      * @throws ServiceException   Не удалось получить права пользователя
      * @throws ClassCastException Не удалось преобразовать полученные данные
      */
-    private Set<String> getUserPermissions(String serviceToken) throws ServiceException, ClassCastException {
-        Dto dto = new ParamDto(serviceToken);
-        Request request = new GetPermissions();
+    private Set<String> getUserPermissions(Request request, Dto dto) throws ServiceException, ClassCastException {
         Optional<String> response = request.send(dto);
         return gson.fromJson(
                 response.orElseThrow(() -> new ServiceException(GET_PERMISSIONS_EXCEPTION)),

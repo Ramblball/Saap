@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceFrame extends JFrame implements Frame {
-    private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/bin/java";
+    private static final String JAVA_HOME = System.getenv("JAVA_HOME") + "/java";
 
     private static final Map<String, Process> processes = new HashMap<>();
 
@@ -55,7 +55,7 @@ public class ServiceFrame extends JFrame implements Frame {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("services");
         if (url == null) {
-            log.error("something going wrong");
+            log.error("Something going wrong");
             dispose();
             return new File[0];
         }

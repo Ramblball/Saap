@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.Message;
 import model.User;
+import view.ApplicationRunner;
 
 import javax.swing.*;
 import java.util.concurrent.SynchronousQueue;
@@ -57,9 +58,9 @@ public class ChatController {
      */
     public void send(String text) {
         Message message = Message.builder()
-                .senderId(UserController.getUser().getId())
+                .senderId(ApplicationRunner.getUser().getId())
                 .receiverId(mate.getId())
-                .senderName(UserController.getUser().getName())
+                .senderName(ApplicationRunner.getUser().getName())
                 .receiverName(mate.getName())
                 .message(text)
                 .build();

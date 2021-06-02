@@ -3,8 +3,10 @@ package view.auth;
 import controller.UserController;
 import controller.exceptions.AuthException;
 import http.dto.RegisterDto;
+import http.request.PostRegister;
+import model.User;
+import view.ApplicationRunner;
 import view.Frame;
-import view.main.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,9 +16,10 @@ import java.awt.*;
  */
 public class RegistrationFrame extends JFrame implements Frame {
 
-    protected static final UserController auth = new UserController();
+    private final UserController auth;
     // Диапазон допустимых возрастов
     private static final Integer[] ages = new Integer[88];
+    private Integer age = 12;
 
     static {
         for (int i = 12; i < 100; i++) {
@@ -30,7 +33,7 @@ public class RegistrationFrame extends JFrame implements Frame {
     // Лэйбл для поля ввода имени пользователя
     private final JLabel cityLabel = new JLabel(AuthLiterals.CITY_LABEL);
     // Поле для ввода имени пользователя
-    protected JTextField cityTextField = new JTextField();
+    private final JTextField cityTextField = new JTextField();
     // Лэйбл для поля ввода возраста
     private final JLabel ageLabel = new JLabel(AuthLiterals.AGE_LABEL);
     // Выпадающий список для ввода возраста
@@ -40,13 +43,15 @@ public class RegistrationFrame extends JFrame implements Frame {
     // Лэйбл для поля ввода пароля
     private final JLabel passwordLabel = new JLabel(AuthLiterals.PASSWORD_LABEL);
     // Поле для ввода имени пользователя
-    protected JTextField userTextField = new JTextField();
+    private final JTextField userTextField = new JTextField();
     // Поле для ввода пароля
-    protected JPasswordField passwordField = new JPasswordField();
+    private final JPasswordField passwordField = new JPasswordField();
     // Чекбокс для отображения и скрытия пароля
-    protected JCheckBox showPassword = new JCheckBox(AuthLiterals.SHOW_PASSWORD);
+    private final JCheckBox showPassword = new JCheckBox(AuthLiterals.SHOW_PASSWORD);
 
-    private Integer age = 12;
+    public RegistrationFrame(UserController auth) {
+        this.auth = auth;
+    }
 
     @Override
     public void build() {
@@ -110,20 +115,22 @@ public class RegistrationFrame extends JFrame implements Frame {
                 JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
-                    auth.register(
+                    User user = auth.register(
+                            new PostRegister(),
                             RegisterDto.builder()
                                     .name(userText)
                                     .password(passwordText)
                                     .city(cityText)
                                     .age(age).build()
                     );
+                    if (user != null) {
+                        ApplicationRunner.setUser(user);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Invalid params");
+                    }
                 } catch (AuthException exception) {
                     JOptionPane.showMessageDialog(this, exception.getMessage());
-                }
-                if (UserController.getUser() != null) {
-                    invokeMain();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Invalid params");
                 }
             }
         });
@@ -135,10 +142,5 @@ public class RegistrationFrame extends JFrame implements Frame {
                 passwordField.setEchoChar('*');
             }
         });
-    }
-
-    private void invokeMain() {
-        SwingUtilities.invokeLater(MainFrame::getInstance);
-        dispose();
     }
 }

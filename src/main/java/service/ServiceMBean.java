@@ -1,9 +1,5 @@
 package service;
 
-import model.User;
-
-import java.util.List;
-
 /**
  * Интерфейс MBean для обращения сервисов по jmx
  */
