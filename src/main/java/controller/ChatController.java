@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.Message;
 import model.User;
+import view.ApplicationRunner;
 
 import javax.swing.*;
 import java.util.concurrent.SynchronousQueue;
@@ -29,9 +30,9 @@ public class ChatController {
      * @param user      Объект собеседника
      * @param chatField Поле окна для вывода сообщения
      */
-    public ChatController(User user, JTextArea chatField) {
+    public ChatController(StompClient client, User user, JTextArea chatField) {
         mate = user;
-        client = StompClient.getInstance();
+        this.client = client;
         // Поток считывающий сообщения собеседника
         // Реализует шаблон producer/consumer
         Thread messageWaiter = new Thread(() -> {
@@ -57,9 +58,9 @@ public class ChatController {
      */
     public void send(String text) {
         Message message = Message.builder()
-                .senderId(UserController.getUser().getId())
+                .senderId(ApplicationRunner.getUser().getId())
                 .receiverId(mate.getId())
-                .senderName(UserController.getUser().getName())
+                .senderName(ApplicationRunner.getUser().getName())
                 .receiverName(mate.getName())
                 .message(text)
                 .build();

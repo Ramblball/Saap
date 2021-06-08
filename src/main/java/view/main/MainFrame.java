@@ -2,14 +2,13 @@ package view.main;
 
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.dto.ParamDto;
+import http.dto.ServiceDTO;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.chat.ChatFrame;
-
 import view.Frame;
+import view.chat.ChatFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,18 +17,15 @@ import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 /**
- * Класс основного окна приложения.
- * Реализует шаблон singleton
+ * Класс основного окна приложения
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Frame {
 
     private static final String EXIT_MSG = "Выйти и зайти нормально?";
 
-    private static final UserController userController = new UserController();
-
-    private static MainFrame instance;
+    private final UserController userController;
 
     Box verticalBox = Box.createVerticalBox();
     JButton addChatButton = new JButton();
@@ -37,24 +33,12 @@ public class MainFrame extends JFrame {
     // Мапинг пользователя в окно чата с ним
     HashMap<String, ChatFrame> chatFrames = new HashMap<>();
 
-    private MainFrame() {
+    public MainFrame(UserController controller) {
         super("SApp");
+        userController = controller;
     }
 
-    /**
-     * Метод для получения экземпляра главного окна
-     *
-     * @return Экземпляр главного окна
-     */
-    public static MainFrame getInstance() {
-        if (instance == null) {
-            instance = new MainFrame();
-            instance.build();
-        }
-        return instance;
-    }
-
-    private void build() {
+    public void build() {
         setComponentsStyle();
         addComponentsToContainer();
         addListeners();
@@ -125,8 +109,8 @@ public class MainFrame extends JFrame {
      */
     public void startChat(String name) {
         try {
-            ParamDto userField = new ParamDto(name);
-            User friendUser = userController.getFriendInfo(userField);
+            User friendUser = userController
+                    .getFriendInfo(new ServiceDTO.Request.Param(name));
             if (chatFrames.containsKey(friendUser.getId())) {
                 openChat(friendUser.getId());
             } else {

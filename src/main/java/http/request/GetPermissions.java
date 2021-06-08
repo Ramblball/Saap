@@ -1,10 +1,9 @@
 package http.request;
 
-import http.AbstractRequest;
-import http.Dto;
 import http.HttpLiterals;
 import http.Request;
-import http.dto.ParamDto;
+import http.RequestSender;
+import http.dto.ServiceDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpRequest;
@@ -14,16 +13,21 @@ import java.util.Optional;
  * Класс запроса на получение списка прав, доступных сервису
  */
 @Slf4j
-public class GetPermissions extends AbstractRequest implements Request {
+public class GetPermissions implements Request<ServiceDTO.Request.Param> {
 
     private static final String PATH = "/service/permissions";
+    private final RequestSender sender;
+
+    public GetPermissions(RequestSender sender) {
+        this.sender = sender;
+    }
 
     @Override
-    public Optional<String> send(Dto object) {
+    public Optional<String> send(ServiceDTO.Request.Param object) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
-                .header(HttpLiterals.SERVICE_HEADER, ((ParamDto) object).getValue())
+                .header(HttpLiterals.SERVICE_HEADER, object.getParam())
                 .GET();
         log.info(PATH + " -> GET");
-        return doRequest(request, PATH);
+        return sender.doRequest(request, PATH);
     }
 }

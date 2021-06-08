@@ -4,10 +4,10 @@ import chat.StompHandler;
 import controller.ServiceController;
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.dto.ParamDto;
+import http.dto.ServiceDTO;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.main.MainFrame;
+import view.ApplicationRunner;
 
 /**
  * Класс реализации интерфейса взаимодействия с сервисами
@@ -24,23 +24,23 @@ public class Service implements ServiceMBean {
     @Override
     public String getLocation(String serviceToken) {
         if (serviceController.hasPermission(serviceToken, LOCATION_PERMISSION)) {
-            return UserController.getUser().getCity();
+            return ApplicationRunner.getUser().getCity();
         }
         return null;
     }
 
     @Override
     public boolean askPermission(String serviceToken, String serviceName, String permission) {
-        return serviceController.addPermission(serviceToken, serviceName, permission);
+        return serviceController.addPermission(serviceToken, permission, serviceName);
     }
 
     @Override
     public boolean openChat(String serviceToken, String receiverName) {
         if (serviceController.hasPermission(serviceToken, CHAT_PERMISSION)) {
             try {
-                User friend = userController.getFriendInfo(new ParamDto(receiverName));
+                User friend = userController.getFriendInfo(new ServiceDTO.Request.Param(receiverName));
                 StompHandler.getQueue(friend.getId());
-                MainFrame.getInstance().startChat(friend.getName());
+                ApplicationRunner.getMainFrame().startChat(friend.getName());
                 return true;
             } catch (NotFoundException ex) {
                 log.error(ex.getMessage(), ex);

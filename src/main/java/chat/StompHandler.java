@@ -1,13 +1,12 @@
 package chat;
 
-import controller.UserController;
 import lombok.extern.slf4j.Slf4j;
 import model.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import view.main.MainFrame;
+import view.ApplicationRunner;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class StompHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         log.info("New session: " + session.getSessionId());
-        String url = String.format(MESSAGE_PATH, UserController.getUser().getId());
+        String url = String.format(MESSAGE_PATH, ApplicationRunner.getUser().getId());
         session.subscribe(url, this);
         log.info("Subscribe to: " + url);
     }
@@ -61,16 +60,16 @@ public class StompHandler extends StompSessionHandlerAdapter {
      */
     private void addMessage(Message message) {
         try {
-            if (message.getSenderName().equals(UserController.getUser().getName())) {
+            if (message.getSenderName().equals(ApplicationRunner.getUser().getName())) {
                 if (!messages.containsKey(message.getReceiverId())) {
                     addQueue(message.getReceiverId());
-                    MainFrame.getInstance().startChat(message.getReceiverName());
+                    ApplicationRunner.getMainFrame().startChat(message.getReceiverName());
                 }
                 getQueue(message.getReceiverId()).put(message);
             } else {
                 if (!messages.containsKey(message.getSenderId())) {
                     addQueue(message.getSenderId());
-                    MainFrame.getInstance().startChat(message.getSenderName());
+                    ApplicationRunner.getMainFrame().startChat(message.getSenderName());
                 }
                 getQueue(message.getSenderId()).put(message);
             }
