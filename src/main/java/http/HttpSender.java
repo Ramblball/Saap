@@ -1,6 +1,5 @@
 package http;
 
-import com.google.gson.Gson;
 import http.dto.ServiceDTO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +18,7 @@ import static java.net.http.HttpResponse.BodyHandlers;
  * Класс для составления запроса к серверу
  */
 @Slf4j
-public abstract class AbstractHttpRequest {
+public class HttpSender implements RequestSender {
 
     // Заголовок указывающий тип данных в теле запроса
     private static final String CONTENT_TYPE = "Content-Type";
@@ -27,7 +26,6 @@ public abstract class AbstractHttpRequest {
     // Адрес сервера
     private static final String URI_LINK = "https://superappserver.herokuapp.com";
 
-    protected final Gson gson = new Gson();
     private final HttpClient client = HttpClient.newHttpClient();
     private static String token;
 
@@ -38,7 +36,7 @@ public abstract class AbstractHttpRequest {
      * @param path    URI путь запроса
      * @return Полученные данные
      */
-    protected Optional<String> doRequest(Builder request, String path) {
+    public Optional<String> doRequest(Builder request, String path) {
         try {
             HttpResponse<String> response =
                     client.send(buildRequest(request, path), BodyHandlers.ofString());
@@ -75,7 +73,7 @@ public abstract class AbstractHttpRequest {
      *
      * @param token Токен авторизации
      */
-    protected void setToken(ServiceDTO.Response.Token token) {
-        AbstractHttpRequest.token = token.getToken();
+    public static void setToken(ServiceDTO.Response.Token token) {
+        HttpSender.token = token.getToken();
     }
 }
