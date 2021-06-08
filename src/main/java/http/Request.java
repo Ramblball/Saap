@@ -5,7 +5,7 @@ import java.util.Optional;
 /**
  * Интерфейс запроса к серверу
  */
-public interface Request {
+public interface Request<T extends Dto> {
 
     /**
      * Метод составляющий запрос к серверу
@@ -13,5 +13,5 @@ public interface Request {
      * @param object Данные для отправки
      * @return Полученные данные
      */
-    Optional<String> send(Dto object);
+    Optional<String> send(T object);
 }

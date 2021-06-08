@@ -1,5 +1,6 @@
 package view.chat;
 
+import chat.StompClient;
 import controller.ChatController;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -29,7 +30,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
 
     public ChatFrame(User mate) {
         super(mate.getName());
-        chatController = new ChatController(mate, messageTextArea);
+        chatController = new ChatController(StompClient.getInstance(), mate, messageTextArea);
     }
 
     @Override

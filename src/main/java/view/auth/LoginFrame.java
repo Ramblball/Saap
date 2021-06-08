@@ -2,8 +2,6 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.dto.LoginDto;
-import http.request.PostLogin;
 import model.User;
 import view.ApplicationRunner;
 import view.Frame;
@@ -89,7 +87,7 @@ public class LoginFrame extends JFrame implements Frame {
                 JOptionPane.showMessageDialog(this, AuthLiterals.EMPTY_FIELDS_DIALOG);
             } else {
                 try {
-                    User user = auth.authorize(new PostLogin(), new LoginDto(userText, passwordText));
+                    User user = auth.authorize(userText, passwordText);
                     if (user != null) {
                         ApplicationRunner.setUser(user);
                         dispose();

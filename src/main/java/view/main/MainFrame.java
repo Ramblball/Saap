@@ -2,15 +2,13 @@ package view.main;
 
 import controller.UserController;
 import controller.exceptions.NotFoundException;
-import http.dto.ParamDto;
-import http.request.GetUser;
+import http.dto.ServiceDTO;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import view.chat.ChatFrame;
-
 import view.Frame;
+import view.chat.ChatFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -111,8 +109,8 @@ public class MainFrame extends JFrame implements Frame {
      */
     public void startChat(String name) {
         try {
-            ParamDto userField = new ParamDto(name);
-            User friendUser = userController.getFriendInfo(new GetUser(), userField);
+            User friendUser = userController
+                    .getFriendInfo(new ServiceDTO.Request.Param(name));
             if (chatFrames.containsKey(friendUser.getId())) {
                 openChat(friendUser.getId());
             } else {

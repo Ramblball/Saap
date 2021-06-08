@@ -30,9 +30,9 @@ public class ChatController {
      * @param user      Объект собеседника
      * @param chatField Поле окна для вывода сообщения
      */
-    public ChatController(User user, JTextArea chatField) {
+    public ChatController(StompClient client, User user, JTextArea chatField) {
         mate = user;
-        client = StompClient.getInstance();
+        this.client = client;
         // Поток считывающий сообщения собеседника
         // Реализует шаблон producer/consumer
         Thread messageWaiter = new Thread(() -> {

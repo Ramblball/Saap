@@ -1,10 +1,7 @@
 package http;
 
-import static java.net.http.HttpRequest.Builder;
-import static java.net.http.HttpResponse.BodyHandlers;
-
 import com.google.gson.Gson;
-import http.dto.TokenDto;
+import http.dto.ServiceDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -15,11 +12,14 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
 
+import static java.net.http.HttpRequest.Builder;
+import static java.net.http.HttpResponse.BodyHandlers;
+
 /**
  * Класс для составления запроса к серверу
  */
 @Slf4j
-public abstract class AbstractRequest {
+public abstract class AbstractHttpRequest {
 
     // Заголовок указывающий тип данных в теле запроса
     private static final String CONTENT_TYPE = "Content-Type";
@@ -75,7 +75,7 @@ public abstract class AbstractRequest {
      *
      * @param token Токен авторизации
      */
-    protected void setToken(TokenDto token) {
-        AbstractRequest.token = token.getPrefix() + token.getToken();
+    protected void setToken(ServiceDTO.Response.Token token) {
+        AbstractHttpRequest.token = token.getToken();
     }
 }

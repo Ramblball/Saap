@@ -6,10 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import service.dating.controller.DatingController;
 import service.dating.model.User;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Iterator;
-
-import javax.swing.*;
 
 /**
  * Класс главного окна знакомств

@@ -1,6 +1,6 @@
 package http.request;
 
-import http.AbstractRequest;
+import http.AbstractHttpRequest;
 import http.Dto;
 import http.Request;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * Класс запроса на получение информации о пользователе
  */
 @Slf4j
-public class GetUser extends AbstractRequest implements Request {
+public class GetUser extends AbstractHttpRequest implements Request<Dto> {
 
     private static final String PATH = "/user/info";
 

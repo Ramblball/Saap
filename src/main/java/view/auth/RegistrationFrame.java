@@ -2,8 +2,6 @@ package view.auth;
 
 import controller.UserController;
 import controller.exceptions.AuthException;
-import http.dto.RegisterDto;
-import http.request.PostRegister;
 import model.User;
 import view.ApplicationRunner;
 import view.Frame;
@@ -116,13 +114,8 @@ public class RegistrationFrame extends JFrame implements Frame {
             } else {
                 try {
                     User user = auth.register(
-                            new PostRegister(),
-                            RegisterDto.builder()
-                                    .name(userText)
-                                    .password(passwordText)
-                                    .city(cityText)
-                                    .age(age).build()
-                    );
+                            userText, passwordText,
+                            age, cityText);
                     if (user != null) {
                         ApplicationRunner.setUser(user);
                         dispose();
