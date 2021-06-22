@@ -1,6 +1,6 @@
 package service;
 
-import chat.StompHandler;
+import chat.StompClient;
 import controller.ServiceController;
 import controller.UserController;
 import controller.exceptions.NotFoundException;
@@ -39,7 +39,7 @@ public class Service implements ServiceMBean {
         if (serviceController.hasPermission(serviceToken, CHAT_PERMISSION)) {
             try {
                 User friend = userController.getFriendInfo(new ServiceDTO.Request.Param(receiverName));
-                StompHandler.getQueue(friend.getId());
+                StompClient.getInstance().getQueue(friend.getId());
                 ApplicationRunner.getMainFrame().startChat(friend.getName());
                 return true;
             } catch (NotFoundException ex) {

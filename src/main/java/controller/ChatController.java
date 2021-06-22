@@ -1,7 +1,6 @@
 package controller;
 
 import chat.StompClient;
-import chat.StompHandler;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +29,13 @@ public class ChatController {
      * @param user      Объект собеседника
      * @param chatField Поле окна для вывода сообщения
      */
-    public ChatController(StompClient client, User user, JTextArea chatField) {
+    public ChatController(User user, JTextArea chatField) {
         mate = user;
-        this.client = client;
+        this.client = StompClient.getInstance();
         // Поток считывающий сообщения собеседника
         // Реализует шаблон producer/consumer
         Thread messageWaiter = new Thread(() -> {
-            SynchronousQueue<Message> queue = StompHandler.getQueue(mate.getId());
+            SynchronousQueue<Message> queue = this.client.getQueue(mate.getId());
             while (true) {
                 try {
                     Message message = queue.take();

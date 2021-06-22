@@ -13,6 +13,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Класс клиента для WebSocket
@@ -68,5 +69,13 @@ public class StompClient {
             connect();
         }
         session.send(SEND_PATH, message);
+    }
+
+    public void addQueue(String id) {
+        StompHandler.addQueue(id);
+    }
+
+    public SynchronousQueue<Message> getQueue(String id) {
+        return StompHandler.getQueue(id);
     }
 }

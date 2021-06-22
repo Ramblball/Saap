@@ -85,8 +85,9 @@ public class DatingFrame extends JFrame implements Frame {
                 userNameLabel.setText("Имя: " + user.getName());
                 userCityLabel.setText("Город: " + user.getCity());
                 userAgeLabel.setText("Возраст: " + user.getAge());
+            } else {
+                JOptionPane.showMessageDialog(this, NO_MORE_USERS);
             }
-            JOptionPane.showMessageDialog(this, NO_MORE_USERS);
         });
         // Открытие чата
         chatButton.addActionListener(e -> {
@@ -114,5 +115,13 @@ public class DatingFrame extends JFrame implements Frame {
      */
     private void getUsers() {
         users = datingController.getUsers().iterator();
+        if (users.hasNext()) {
+            user = users.next();
+            userNameLabel.setText("Имя: " + user.getName());
+            userCityLabel.setText("Город: " + user.getCity());
+            userAgeLabel.setText("Возраст: " + user.getAge());
+        } else {
+            JOptionPane.showMessageDialog(this, NO_MORE_USERS);
+        }
     }
 }

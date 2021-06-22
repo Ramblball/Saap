@@ -23,7 +23,7 @@ import java.util.HashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MainFrame extends JFrame implements Frame {
 
-    private static final String EXIT_MSG = "Выйти и зайти нормально?";
+    private static final String EXIT_MSG = "Вы действительно хотите выйти?";
 
     private final UserController userController;
 

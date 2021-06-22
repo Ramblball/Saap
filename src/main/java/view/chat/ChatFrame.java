@@ -30,7 +30,7 @@ public class ChatFrame extends JInternalFrame implements Frame {
 
     public ChatFrame(User mate) {
         super(mate.getName());
-        chatController = new ChatController(StompClient.getInstance(), mate, messageTextArea);
+        chatController = new ChatController(mate, messageTextArea);
     }
 
     @Override

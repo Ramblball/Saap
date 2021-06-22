@@ -78,14 +78,11 @@ public class StompHandler extends StompSessionHandlerAdapter {
         }
     }
 
-    public static void addQueue(String id) {
+    static void addQueue(String id) {
         messages.put(id, new SynchronousQueue<>());
     }
 
-    public static SynchronousQueue<Message> getQueue(String id) {
-        if (!messages.containsKey(id)) {
-            messages.put(id, new SynchronousQueue<>());
-        }
+    static SynchronousQueue<Message> getQueue(String id) {
         return messages.get(id);
     }
 }
